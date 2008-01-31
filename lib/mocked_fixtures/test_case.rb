@@ -24,7 +24,10 @@ module Test #:nodoc:
         end
 
         self.mock_fixture_table_names |= table_names
+        
+        #this is called as is from the Fixtures class
         require_fixture_classes(table_names)
+        
         setup_mock_fixture_accessors(table_names)
       end      
       
