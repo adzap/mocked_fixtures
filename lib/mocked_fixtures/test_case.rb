@@ -1,32 +1,18 @@
+# Reload test/unit to alias into the method_added hook as its declared
+# which can't be done after test/unit is loaded elsewhere
 require 'test/unit'
 module Test #:nodoc:
   module Unit #:nodoc:
     class TestCase #:nodoc:
       
-      # FIXME: can't use cattr for these accessors as rails is not loaded yet
-      # how to load this file after rails loads but before test/unit
+      cattr_accessor :mock_fixture_table_names
       @@mock_fixture_table_names = []
-      def self.mock_fixture_table_names
-        @@mock_fixture_table_names
-      end
       
-      def self.mock_fixture_table_names=(value)
-        @@mock_fixture_table_names = value
-      end
-            
+      cattr_accessor :all_loaded_mock_fixtures
       @@all_loaded_mock_fixtures = {}
-      def self.all_loaded_mock_fixtures
-        @@all_loaded_mock_fixtures
-      end 
       
-      @@mock_fixtures_loaded = false
-      def self.mock_fixtures_loaded
-        @@mock_fixtures_loaded
-      end
-      
-      def self.mock_fixtures_loaded=(value)
-        @@mock_fixtures_loaded = value
-      end      
+      cattr_accessor :mock_fixtures_loaded
+      @@mock_fixtures_loaded = false   
       
       # modified from Fixtures TestCase extensions
       def self.mock_fixtures(*table_names)
@@ -41,7 +27,12 @@ module Test #:nodoc:
         require_fixture_classes(table_names)
         setup_mock_fixture_accessors(table_names)
       end      
-    
+      
+      # Adds test case setup method to run
+      # before each test to load fixture files and setup
+      # mock fixture accessors for test class. This runs
+      # before each test as the test class is recreated 
+      # each time
       def self.method_added_with_mock_fixtures(method)
         return if @__disable_method_added__
         @__disable_method_added__ = true
@@ -66,19 +57,23 @@ module Test #:nodoc:
         alias_method :method_added, :method_added_with_mock_fixtures
       end      
      
-      # modified from Fixtures TestCase extensions
+      # Modified from Fixtures TestCase extensions.
+      # This creates the fixture accessors and retrieves the
+      # fixture and creates mock from it. Mocked fixture
+      # is then cached.
       def self.setup_mock_fixture_accessors(table_names = nil)
         (table_names || mock_fixture_table_names).each do |table_name|
           table_name = table_name.to_s.tr('.', '_')
     
           define_method('mock_' + table_name) do |*fixtures|     
             @mock_fixture_cache[table_name] ||= {}
-    
+            mock_fixtures = self.class.all_loaded_mock_fixtures[table_name]
             instances = fixtures.map do |fixture|            
-              if self.class.all_loaded_mock_fixtures[table_name][fixture.to_s]
-                @mock_fixture_cache[table_name][fixture] ||= mock_model(self.class.all_loaded_mock_fixtures[table_name].send(:model_class), self.class.all_loaded_mock_fixtures[table_name][fixture.to_s].to_hash)
+              if mock_fixtures[fixture.to_s]
+                @mock_fixture_cache[table_name][fixture] ||= 
+                    mock_model(mock_fixtures.send(:model_class), mock_fixtures[fixture.to_s].to_hash.symbolize_keys)
               else
-                raise StandardError, "No fixture with name '#{fixture}' found for table '#{table_name}'"
+                raise StandardError, "No mocked fixture with name '#{fixture}' found for table '#{table_name}'"
               end
             end
     
@@ -87,23 +82,24 @@ module Test #:nodoc:
         end
       end
       
+      # Loads fixtures to be mocked and stores them in class variable
+      # as they won't change.
       def load_mock_fixtures
         fixtures = MockFixtures.create_fixtures(fixture_path, self.class.mock_fixture_table_names, fixture_class_names)
         unless fixtures.nil?
-          if fixtures.instance_of?(MockFixtures)
-            puts 'fixtures loaded'
+          if fixtures.instance_of?(MockFixtures)            
             self.class.loaded_mock_fixtures[fixtures.table_name] = fixtures
           else
             fixtures.each { |f| self.class.all_loaded_mock_fixtures[f.table_name] = f }
           end
-        end      
+        end
       end
       
+      # Sets up mock cache for each test and only
+      # the mock fixtures files once for all tests and specs
       def mock_fixture_setup 
         @mock_fixture_cache = {}
-        return self.class.mock_fixtures_loaded
-#        return if @mock_fixtures_setup
-        @mock_fixtures_setup = true        
+        return if self.class.mock_fixtures_loaded  
         load_mock_fixtures
         self.class.mock_fixtures_loaded = true
       end
