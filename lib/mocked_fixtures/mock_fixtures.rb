@@ -1,3 +1,4 @@
+require 'active_record/fixtures'
 class MockFixtures < Fixtures
     
   class DummyConnection
@@ -8,14 +9,17 @@ class MockFixtures < Fixtures
     # insert_fixtures method
     class Column 
       attr_accessor :name
+      def initialize(name)      
+        self.name = name       
+      end
     end
     
     def self.columns(table_name)
-      schema[table_name.to_s].collect {|c| col = Column.new; col.name = c; col }
+      schema[table_name.to_s].collect {|c| col = Column.new(c) }
     end
     
     def self.insert_fixture(fixture, table_name)      
-      # do nothing
+      # override do nothing (NOP) as we are no using the database
     end
   end
   
@@ -40,10 +44,10 @@ class MockFixtures < Fixtures
   end
   
   def column_names
-    @column_names ||= @connection.columns(@table_name).collect(&:name)
+    @column_name ||= @connection.columns(@table_name).collect(&:name)
   end
   
   def delete_existing_fixtures
-    # override to do nothing
+    # override do nothing (NOP) as we are no using the database
   end
 end

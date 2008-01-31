@@ -1,4 +1,6 @@
 MockedFixtures
 ===========
 
-Description goes here
+This plugin adds the ability to use fixtures as mocked classes rather than load in them database. This 
+particularly speeds up tests where the database is not needed such as in functional tests or controller
+and view specs.
