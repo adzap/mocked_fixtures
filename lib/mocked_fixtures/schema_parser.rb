@@ -4,6 +4,7 @@ module MockedFixtures
       RAILS_ROOT + '/db/schema.rb'
     end
     
+    # Parses schema.rb file and pulls out all the columns names.
     def self.load_schema(path=nil)
       schema = {}
       table_name = ""

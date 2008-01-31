@@ -17,8 +17,8 @@ module MockedFixtures
     # and the errors method 
     module InstanceMethods
       def mock_model_with_attributes(model_class, options_and_stubs = {})
-        attributes = options_and_stubs.delete(:attributes)
-        errors     = options_and_stubs.delete(:errors)
+        attributes = options_and_stubs.delete(:all_attributes)
+        errors     = options_and_stubs.delete(:add_errors)
         object = mock_model_without_attributes(model_class, options_and_stubs)
         if attributes 
           schema = MockedFixtures::SchemaParser.load_schema

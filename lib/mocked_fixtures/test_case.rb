@@ -74,7 +74,7 @@ module Test #:nodoc:
 
                 # get fixture and create a mock with it. Include all attributes in mock. Cache mock.
                 @mock_fixture_cache[table_name][fixture] ||= 
-                    mock_model(mock_fixtures.send(:model_class), {:attributes => true}.merge(mock_fixtures[fixture.to_s].to_hash.symbolize_keys))
+                    mock_model(mock_fixtures.send(:model_class), {:all_attributes => true, :add_errors => true}.merge(mock_fixtures[fixture.to_s].to_hash.symbolize_keys))
               else
                 raise StandardError, "No mocked fixture with name '#{fixture}' found for table '#{table_name}'"
               end
