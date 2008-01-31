@@ -13,7 +13,7 @@ Then in your 'test_helper.rb' or 'spec_helper.rb' file:
 	
 	require 'mocked_fixtures'
 
-This line must be *above* the require 'spec/rails' line.
+This line must be *above* the require 'spec/rails' line in your spec_helper.rb file.
 
 Then in your tests or specs use 
 	

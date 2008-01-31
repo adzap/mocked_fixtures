@@ -1,5 +1,5 @@
-# Reload test/unit to alias the method_added hook as its declared
-# which can't be done after test/unit is loaded elsewhere
+# Reloads test/unit to alias the method_added hook as its declared
+# which doesn't seem to be possible after test/unit is loaded elsewhere
 require 'test/unit'
 module Test #:nodoc:
   module Unit #:nodoc:
@@ -8,8 +8,8 @@ module Test #:nodoc:
       cattr_accessor :mock_fixture_table_names
       @@mock_fixture_table_names = []
       
-      cattr_accessor :all_loaded_mock_fixtures
-      @@all_loaded_mock_fixtures = {}
+      cattr_accessor :loaded_mock_fixtures
+      @@loaded_mock_fixtures = {}
       
       cattr_accessor :mock_fixtures_loaded
       @@mock_fixtures_loaded = false   
@@ -68,7 +68,7 @@ module Test #:nodoc:
     
           define_method('mock_' + table_name) do |*fixtures|     
             @mock_fixture_cache[table_name] ||= {}
-            mock_fixtures = self.class.all_loaded_mock_fixtures[table_name]
+            mock_fixtures = self.class.loaded_mock_fixtures[table_name]
             instances = fixtures.map do |fixture|            
               if mock_fixtures[fixture.to_s]
 
@@ -93,7 +93,7 @@ module Test #:nodoc:
           if fixtures.instance_of?(MockFixtures)            
             self.class.loaded_mock_fixtures[fixtures.table_name] = fixtures
           else
-            fixtures.each { |f| self.class.all_loaded_mock_fixtures[f.table_name] = f }
+            fixtures.each { |f| self.class.loaded_mock_fixtures[f.table_name] = f }
           end
         end
       end
