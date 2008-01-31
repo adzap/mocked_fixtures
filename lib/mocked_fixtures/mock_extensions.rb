@@ -23,7 +23,7 @@ module MockedFixtures
         if attributes 
           schema = MockedFixtures::SchemaParser.load_schema
           table = model_class.table_name
-          schema[table].each { |column| object.stub!(column.to_sym) }
+          schema[table].each { |column| object.stub!(column.to_sym) unless object.respond_to?(column) }
         end
         if errors
           errors = []

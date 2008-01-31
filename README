@@ -4,3 +4,26 @@ MockedFixtures
 This plugin adds the ability to use fixtures as mocked classes rather than load in them database. This 
 particularly speeds up tests where the database is not needed such as in functional tests or controller
 and view specs.
+
+To use it install as a plugin
+
+	piston import URL_TO_COME vendor/plugins/mocked_fixtures
+	
+Then in your 'test_helper.rb' or 'spec_helper.rb' file:
+	
+	require 'mocked_fixtures'
+
+This line must be *above* the require 'spec/rails' line.
+
+Then in your tests or specs use 
+	
+	mock_fixtures :people
+	
+as you would with normal fixture names and then use the accessor.
+
+	mock_people(:joey)
+
+That is if you have a fixture labelled 'joey' of course.
+
+You get back a mocked model of the Person class with stubbed methods for all
+the attributes and with the fixture values returned from the method call.
