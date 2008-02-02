@@ -8,8 +8,8 @@ module Test #:nodoc:
   module Unit #:nodoc:
     class TestCase #:nodoc:
       
-      cattr_accessor :mock_fixture_table_names
-      @@mock_fixture_table_names = []
+      superclass_delegating_accessor :mock_fixture_table_names
+      self.mock_fixture_table_names = []
       
       cattr_accessor :loaded_mock_fixtures
       @@loaded_mock_fixtures = {}
@@ -25,7 +25,8 @@ module Test #:nodoc:
           table_names = table_names.flatten.map { |n| n.to_s }
         end
 
-        self.mock_fixture_table_names |= table_names
+        # stores table_names for subclass only
+        self.mock_fixture_table_names = table_names
         
         #this is called as is from the Fixtures class
         require_fixture_classes(table_names)
@@ -33,10 +34,9 @@ module Test #:nodoc:
         setup_mock_fixture_accessors(table_names)
       end      
       
-      # Adds test case setup method to run  before each 
-      # test to load fixture files and setup mock fixture 
-      # accessors for test class. This runs before each 
-      # test as the test class is recreated each time.       
+      # Adds test case setup method to run  before each test to load fixture 
+      # files and setup mock fixture accessors for test class. This runs before
+      # each test as the test class is recreated each time.       
       def self.method_added_with_mock_fixtures(method)
         return if @__disable_method_added__
         @__disable_method_added__ = true
@@ -59,23 +59,20 @@ module Test #:nodoc:
         alias_method_chain :method_added, :mock_fixtures
       end      
      
-      # This creates the fixture accessors and retrieves the
-      # fixture and creates mock from it. Mocked fixture
-      # is then cached.
+      # This creates the fixture accessors and retrieves the fixture and creates
+      # mock from it. Mocked fixture is then cached.
       def self.setup_mock_fixture_accessors(table_names = nil)
         (table_names || mock_fixture_table_names).each do |table_name|
           table_name = table_name.to_s.tr('.', '_')
     
-          define_method('mock_' + table_name) do |*fixtures|     
+          define_method('mock_' + table_name) do |*fixtures|
+            @mock_fixture_cache ||= {}
             @mock_fixture_cache[table_name] ||= {}
-            mock_fixtures = self.class.loaded_mock_fixtures[table_name]
             instances = fixtures.map do |fixture|            
-              if mock_fixtures[fixture.to_s]
-                # get fixture and create a mock with it. Include all attributes in mock. Cache mock.
-                @mock_fixture_cache[table_name][fixture] ||= 
-                    mock_model(mock_fixtures.send(:model_class), 
-                      {:all_attributes => true, :add_errors => true}.merge(mock_fixtures[fixture.to_s].to_hash.symbolize_keys)
-                    )
+              if self.class.loaded_mock_fixtures[table_name][fixture.to_s]
+                # get fixture and create a mock with it. Include all attributes 
+                # in mock and the errors stub and mock object
+                @mock_fixture_cache[table_name][fixture] ||= create_mock(table_name, fixture)
               else
                 raise StandardError, "No mocked fixture with name '#{fixture}' found for table '#{table_name}'"
               end
@@ -85,10 +82,33 @@ module Test #:nodoc:
         end
       end
       
-      # Loads fixtures to be mocked and stores them in 
-      # class variable as they won't change.
-      def load_mock_fixtures
-        fixtures = MockFixtures.create_fixtures(fixture_path, self.class.mock_fixture_table_names, fixture_class_names)
+      def create_mock(table_name, fixture)
+        table_fixtures = self.class.loaded_mock_fixtures[table_name]
+        model_class    = table_fixtures.send(:model_class)
+        attributes     = table_fixtures.connection.schema[table_name]
+        fixture        = table_fixtures[fixture.to_s].to_hash.symbolize_keys
+        
+        if defined?(Spec::Rails::Example::RailsExampleGroup) && 
+            self.class < Spec::Rails::Example::RailsExampleGroup
+          
+          create_rspec_mock(model_class, fixture)
+        else
+          create_rspec_mock(model_class, fixture)
+        end
+        
+      end     
+      
+      def create_rspec_mock(model_class, fixture)
+        mock_model(model_class,
+                    { :all_attributes => true, 
+                      :add_errors     => true
+                    }.merge(fixture) )
+      end
+      
+      # Loads fixtures to be mocked and stores them in class variable as they
+      # won't change.
+      def load_mock_fixtures(fixtures_to_load)
+        fixtures = MockFixtures.create_fixtures(fixture_path, fixtures_to_load, fixture_class_names)
         unless fixtures.nil?
           if fixtures.instance_of?(MockFixtures)            
             self.class.loaded_mock_fixtures[fixtures.table_name] = fixtures
@@ -98,12 +118,11 @@ module Test #:nodoc:
         end
       end
       
-      # Mock fixture files are loaded once for all tests and specs
-      def mock_fixture_setup 
-        @mock_fixture_cache = {}
-        return if self.class.mock_fixtures_loaded  
-        load_mock_fixtures
-        self.class.mock_fixtures_loaded = true
+      # Only load mock fixtures which are not already loaded
+      def mock_fixture_setup        
+        fixtures_to_load = self.class.mock_fixture_table_names - self.class.loaded_mock_fixtures.keys
+        return if fixtures_to_load.empty?       
+        load_mock_fixtures(fixtures_to_load)
       end
     end
   end

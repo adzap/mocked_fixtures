@@ -10,7 +10,7 @@ class MockFixtures < Fixtures
     class Column 
       attr_accessor :name
       def initialize(name)      
-        self.name = name       
+        self.name = name
       end
     end
     
@@ -19,7 +19,7 @@ class MockFixtures < Fixtures
     end
     
     def self.insert_fixture(fixture, table_name)      
-      # override do nothing (NOP) as we are no using the database
+      # override to do nothing (NOP) as we are no using the database
     end
   end
   
@@ -32,6 +32,8 @@ class MockFixtures < Fixtures
     
     fixtures.each { |fixture| fixture.insert_fixtures }
   end
+  
+  attr_reader :connection
   
   def initialize(table_name, class_name, fixture_path, file_filter = DEFAULT_FILTER_RE)
     @table_name, @fixture_path, @file_filter = table_name, fixture_path, file_filter
@@ -48,6 +50,6 @@ class MockFixtures < Fixtures
   end
   
   def delete_existing_fixtures
-    # override do nothing (NOP) as we are no using the database
+    # override to do nothing (NOP) as we are no using the database
   end
 end
