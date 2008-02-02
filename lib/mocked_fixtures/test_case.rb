@@ -1,9 +1,6 @@
-# Reloads test/unit to alias the method_added hook as its declared
-# which doesn't seem to be possible after test/unit is loaded elsewhere.
-#
 # Many of these methods are renamed and modified form the Rails Fixtures 
 # TestCase class extensions.
-require 'test/unit'
+require 'active_record/fixtures'
 module Test #:nodoc:
   module Unit #:nodoc:
     class TestCase #:nodoc:
@@ -40,8 +37,9 @@ module Test #:nodoc:
       def self.method_added_with_mock_fixtures(method)
         return if @__disable_method_added__
         @__disable_method_added__ = true
-        
+
         if method.to_s == 'setup'
+          puts 'loaded'
           unless method_defined?(:setup_with_mock_fixtures)
             define_method(:setup_with_mock_fixtures) do
               mock_fixture_setup
@@ -119,7 +117,7 @@ module Test #:nodoc:
       end
       
       # Only load mock fixtures which are not already loaded
-      def mock_fixture_setup        
+      def mock_fixture_setup    
         fixtures_to_load = self.class.mock_fixture_table_names - self.class.loaded_mock_fixtures.keys
         return if fixtures_to_load.empty?       
         load_mock_fixtures(fixtures_to_load)
