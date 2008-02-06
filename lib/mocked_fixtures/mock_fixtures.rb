@@ -3,7 +3,6 @@ class MockFixtures < Fixtures
     
   class DummyConnection
     cattr_accessor :schema
-    self.schema = MockedFixtures::SchemaParser.load_schema
     
     # dummy column class which is used is Fixtures class
     # insert_fixtures method
@@ -12,6 +11,10 @@ class MockFixtures < Fixtures
       def initialize(name)      
         self.name = name
       end
+    end
+    
+    def self.schema(path=nil)
+      @@schema ||= MockedFixtures::SchemaParser.load_schema(path)
     end
     
     def self.columns(table_name)

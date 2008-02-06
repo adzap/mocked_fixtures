@@ -1,3 +1,5 @@
+# rspec_on_rails mock_model extensions to add the stubs for all attributes
+# and the errors method 
 module MockedFixtures
   module MockExtensions
     
@@ -13,8 +15,6 @@ module MockedFixtures
 
     end
     
-    # rspec_on_rails extensions to add the stubs for the attributes
-    # and the errors method 
     module InstanceMethods
       def mock_model_with_attributes(model_class, options_and_stubs = {})
         attributes = options_and_stubs.delete(:all_attributes)
@@ -28,7 +28,7 @@ module MockedFixtures
         if errors
           errors = []
           errors.stub!(:count).and_return(0)
-          errors.stub!(:on).and_return([])
+          errors.stub!(:on).and_return(nil)
           object.stub!(:errors).and_return(errors)
         end
         object
