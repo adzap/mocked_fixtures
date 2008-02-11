@@ -9,7 +9,7 @@ class MockFixtures < Fixtures
     class Column 
       attr_accessor :name, :type
       def initialize(name, type)
-        @name, @type = name, type        
+        @name, @type = name, type
       end
     end
     
@@ -45,7 +45,9 @@ class MockFixtures < Fixtures
       end
     end
     
-    # Modified from ActiveRecord::Column class
+    # Modified from ActiveRecord::Column class. Some columns make fail with
+    # certains adapters, such as the boolean.
+    # TODO: use native test schema adapter for type casting
     def type_cast_value(type, value)
       return nil if value.nil?
       column = ActiveRecord::ConnectionAdapters::Column
@@ -66,9 +68,9 @@ class MockFixtures < Fixtures
     end
   end
   
-  # Takes loaded fixture files for each table and type casts the values and 
+  # Gets loaded fixture files for each table and type casts the values and 
   # returns the array of MockFixtures instances. The insert_fixtures method
-  # is necessary to get the superclass to do all the fancy 
+  # is necessary to get the superclass to do all the fancy associations work
   def self.create_fixtures(fixtures_directory, table_names, class_names = {})
     table_names = [table_names].flatten.map { |n| n.to_s }
     fixtures = table_names.map do |table_name|      
