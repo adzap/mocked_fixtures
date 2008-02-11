@@ -78,14 +78,14 @@ module Test #:nodoc:
             instances.size == 1 ? instances.first : instances
           end
         end
-      end
+      end      
       
-      def create_mock(table_name, fixture)
+      # Create mock object from fixture
+      def create_mock(table_name, fixture_name)
         table_fixtures = self.class.loaded_mock_fixtures[table_name]
         model_class    = table_fixtures.send(:model_class)
-        attributes     = table_fixtures.connection.schema[table_name]
-        fixture        = table_fixtures[fixture.to_s].to_hash.symbolize_keys
-        
+        columns        = table_fixtures.connection.schema[table_name]
+        fixture        = table_fixtures[fixture_name.to_s]
         if defined?(Spec::Rails::Example::RailsExampleGroup) && 
             self.class < Spec::Rails::Example::RailsExampleGroup
           
@@ -108,11 +108,7 @@ module Test #:nodoc:
       def load_mock_fixtures(fixtures_to_load)
         fixtures = MockFixtures.create_fixtures(fixture_path, fixtures_to_load, fixture_class_names)
         unless fixtures.nil?
-          if fixtures.instance_of?(MockFixtures)            
-            self.class.loaded_mock_fixtures[fixtures.table_name] = fixtures
-          else
-            fixtures.each { |f| self.class.loaded_mock_fixtures[f.table_name] = f }
-          end
+          fixtures.each { |f| self.class.loaded_mock_fixtures[f.table_name] = f }
         end
       end
       
@@ -125,3 +121,4 @@ module Test #:nodoc:
     end
   end
 end
+

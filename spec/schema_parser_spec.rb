@@ -25,8 +25,13 @@ describe MockedFixtures::SchemaParser do
   
   it "should return schema table with columns in array" do
     schema = parser.load_schema
-    schema["companies"].should == ["name", "created_at", "updated_at"]
-    schema["employees"].should == ["company_id", "first_name", "last_name", "created_at", "updated_at"]    
+    schema["companies"].should == [["name", "string"], ["created_at", "datetime"], ["updated_at", "datetime"]]
+    schema["employees"].should == [["id",         "integer"],
+                                   ["company_id", "integer"], 
+                                   ["first_name", "string"], 
+                                   ["last_name",  "string"], 
+                                   ["created_at", "datetime"], 
+                                   ["updated_at", "datetime"]]
   end
   
   def parser

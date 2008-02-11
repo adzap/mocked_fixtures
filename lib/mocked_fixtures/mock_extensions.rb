@@ -19,11 +19,11 @@ module MockedFixtures
       def mock_model_with_attributes(model_class, options_and_stubs = {})
         attributes = options_and_stubs.delete(:all_attributes)
         errors     = options_and_stubs.delete(:add_errors)
-        object = mock_model_without_attributes(model_class, options_and_stubs)
+        object     = mock_model_without_attributes(model_class, options_and_stubs)
         if attributes 
           schema = MockedFixtures::SchemaParser.load_schema
-          table = model_class.table_name
-          schema[table].each { |column| object.stub!(column.to_sym) unless object.respond_to?(column) }
+          table  = model_class.table_name
+          schema[table].each { |column| object.stub!(column[0].to_sym) unless object.respond_to?(column[0]) }
         end
         if errors
           errors = []

@@ -1,6 +1,6 @@
 ActiveRecord::Schema.define(:version => 1) do
 
-  create_table "companies", :force => true do |t|
+  create_table "companies", :force => true, :id => false do |t|
     t.string   "name",       :null => false,  :unique => true
     t.datetime "created_at"
     t.datetime "updated_at"
