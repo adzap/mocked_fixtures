@@ -12,11 +12,11 @@ module Test #:nodoc:
       @@loaded_mock_fixtures = {}
       
       cattr_accessor :mock_fixtures_loaded
-      @@mock_fixtures_loaded = false   
+      @@mock_fixtures_loaded = false
       
       def self.mock_fixtures(*table_names)
         if table_names.first == :all
-          table_names = Dir["#{fixture_path}/*.yml"] + Dir["#{fixture_path}/*.csv"]
+          table_names = Dir["#{fixture_path}/**/*.yml"] + Dir["#{fixture_path}/*.csv"]
           table_names.map! { |f| File.basename(f).split('.')[0..-2].join('.') }
         else
           table_names = table_names.flatten.map { |n| n.to_s }
@@ -66,16 +66,20 @@ module Test #:nodoc:
           define_method('mock_' + table_name) do |*fixtures|
             @mock_fixture_cache ||= {}
             @mock_fixture_cache[table_name] ||= {}
-            instances = fixtures.map do |fixture|            
-              if self.class.loaded_mock_fixtures[table_name][fixture.to_s]
-                # get fixture and create a mock with it. Include all attributes 
-                # in mock and the errors stub and mock object
-                @mock_fixture_cache[table_name][fixture] ||= create_mock(table_name, fixture)
-              else
-                raise StandardError, "No mocked fixture with name '#{fixture}' found for table '#{table_name}'"
-              end
-            end    
-            instances.size == 1 ? instances.first : instances
+            if fixtures == :all
+              send('mock_' + table_name, self.class.loaded_mock_fixtures[table_name].keys)
+            else
+              instances = fixtures.map do |fixture|            
+                if self.class.loaded_mock_fixtures[table_name][fixture.to_s]
+                  # get fixture and create a mock with it. Include all attributes 
+                  # in mock and the errors stub and mock object
+                  @mock_fixture_cache[table_name][fixture] ||= create_mock(table_name, fixture)
+                else
+                  raise StandardError, "No mocked fixture with name '#{fixture}' found for table '#{table_name}'"
+                end
+              end    
+              instances.size == 1 ? instances.first : instances
+            end
           end
         end
       end      

@@ -4,8 +4,7 @@ class MockFixtures < Fixtures
   class DummyConnection
     cattr_accessor :schema
     
-    # dummy column class which is used is Fixtures class
-    # insert_fixtures method
+    # dummy column class which is used in Fixtures class insert_fixtures method
     class Column 
       attr_accessor :name, :type
       def initialize(name, type)
