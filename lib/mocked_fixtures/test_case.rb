@@ -66,7 +66,7 @@ module Test #:nodoc:
           define_method('mock_' + table_name) do |*fixtures|
             @mock_fixture_cache ||= {}
             @mock_fixture_cache[table_name] ||= {}
-            if fixtures == :all
+            if fixtures.first == :all
               fixtures = self.class.loaded_mock_fixtures[table_name].keys
             end
             
