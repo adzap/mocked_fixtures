@@ -1,16 +1,13 @@
 $: << File.dirname(__FILE__) + '/../lib' << File.dirname(__FILE__) + '/rspec_on_rails' << File.dirname(__FILE__)
 
-gem 'activerecord'
-gem 'activesupport'
-require 'active_record'
-require 'active_support'
+require 'rubygems'
+require 'spec'
+require 'activerecord'
+require 'activesupport'
 
-require 'mocked_fixtures/test_case'
-require 'mocked_fixtures/schema_parser'
-require 'mocked_fixtures/mock_extensions'
-require 'mocked_fixtures/mock_fixtures'
+require 'mocked_fixtures'
 
-require 'rspec_on_rails/testcase'
-require 'rspec_on_rails/rails_example_group'
+#require 'rspec_on_rails/testcase'
+#require 'rspec_on_rails/rails_example_group'
 
-Spec::Rails::Example::RailsExampleGroup.send(:include, MockedFixtures::MockExtensions)
+#Spec::Rails::Example::RailsExampleGroup.send(:include, MockedFixtures::MockExtensions)

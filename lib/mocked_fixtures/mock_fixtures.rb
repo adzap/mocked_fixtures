@@ -5,7 +5,7 @@ class MockFixtures < Fixtures
     cattr_accessor :schema
     
     # dummy column class which is used in Fixtures class insert_fixtures method
-    class Column 
+    class Column
       attr_accessor :name, :type
       def initialize(name, type)
         @name, @type = name, type
@@ -28,11 +28,11 @@ class MockFixtures < Fixtures
       self.class.columns(table_name)
     end
     
-    def insert_fixture(fixture, table_name) 
+    def insert_fixture(fixture, table_name)
       # override to do nothing (NOP) as we are not using the database
     end
     
-    def type_cast_fixture(fixture, table_name)      
+    def type_cast_fixture(fixture, table_name)
       fixture.to_hash.inject({}) do |new_hash, row|
         begin
           type = schema[table_name.to_s].assoc(row[0])[1]
@@ -44,9 +44,7 @@ class MockFixtures < Fixtures
       end
     end
     
-    # Modified from ActiveRecord::Column class. Some columns make fail with
-    # certains adapters, such as the boolean.
-    # TODO: use native test schema adapter for type casting
+    # Modified from ActiveRecord::Column class.
     def type_cast_value(type, value)
       return nil if value.nil?
       column = ActiveRecord::ConnectionAdapters::Column
@@ -67,12 +65,12 @@ class MockFixtures < Fixtures
     end
   end
   
-  # Gets loaded fixture files for each table and type casts the values and 
+  # Gets loaded fixture files for each table and type casts the values and
   # returns the array of MockFixtures instances. The insert_fixtures method
   # is necessary to get the superclass to do all the fancy associations work
   def self.create_fixtures(fixtures_directory, table_names, class_names = {})
     table_names = [table_names].flatten.map { |n| n.to_s }
-    fixtures = table_names.map do |table_name|      
+    fixtures = table_names.map do |table_name|
       fixture = MockFixtures.new(File.split(table_name.to_s).last, class_names[table_name.to_sym], File.join(fixtures_directory, table_name.to_s))
       fixture.insert_fixtures
       fixture.each {|label, f| fixture[label] = fixture.connection.type_cast_fixture(f, fixture.table_name) }

@@ -1,0 +1,2 @@
+- option override normal fixture method with mock fixture accessor
+- config option for global mock fixtures

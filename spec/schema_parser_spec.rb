@@ -27,10 +27,10 @@ describe MockedFixtures::SchemaParser do
     schema = parser.load_schema
     schema["companies"].should == [["name", "string"], ["created_at", "datetime"], ["updated_at", "datetime"]]
     schema["employees"].should == [["id",         "integer"],
-                                   ["company_id", "integer"], 
-                                   ["first_name", "string"], 
-                                   ["last_name",  "string"], 
-                                   ["created_at", "datetime"], 
+                                   ["company_id", "integer"],
+                                   ["first_name", "string"],
+                                   ["last_name",  "string"],
+                                   ["created_at", "datetime"],
                                    ["updated_at", "datetime"]]
   end
   
