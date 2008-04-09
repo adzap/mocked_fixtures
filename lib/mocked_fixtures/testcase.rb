@@ -22,10 +22,9 @@ module Test #:nodoc:
           table_names = table_names.flatten.map { |n| n.to_s }
         end
 
-        # stores table_names for subclass only
         self.mock_fixture_table_names = table_names
         
-        #this is called as is from the Fixtures class
+        #this is called as is from the Rails Fixtures class
         require_fixture_classes(table_names)
         
         setup_mock_fixture_accessors(table_names)

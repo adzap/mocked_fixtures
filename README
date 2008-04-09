@@ -34,7 +34,7 @@ To this:
 But I hear you say you can do the first example inline, which is true. But 
 still it can be tedious for lesser model attributes. If you have a nice fixture 
 you used from your model specs then why not reuse it eh?! Also if you have many 
-attributes which you are stubbing just so the controller or view spec doen't 
+attributes which you are stubbing just so the controller or view spec don't 
 throw an 'unexpected message error', then this can make short work for you.
 
 Again none of this touches the database as all model attributes are read from
@@ -68,22 +68,29 @@ just like you would with the normal fixtures class method.
 
 Then in your test method or example you call:
 	
-	@joey = mock_people(:joey)
+	@joey = mock_people(:joe)
 
-If you have a people fixture labelled 'joey' you will get back the mocked
+If you have a people fixture labelled 'joe' you will get back the mocked
 model object to play with that has all the values from the fixture returned when
 the attribute methods are called.
 
+Also you can,
+
+	@people = mock_people(:all)
+
+to get the array of mocked models.	
+
 Now remember the mocked objects are just simple mocked models and the 
-attributes only have getters not setters. This is the same behaviour as
-mock_model(YourModel) using mocha (rspec) or flexmock(:model, YourModel), um 
-because thats where they came from. Not from the stalk or the cabbage patch.
+attributes only have readers not writers. This is the same behaviour as
+mock_model(YourModel) using rspec or flexmock(:model, YourModel),
+because thats what the mocks are created with.
 
 
 Feedback
 ========
 
 If you have feedback or suggestions Google has kindly donated me this email
-address to contact me: 
+address to contact me:
 
 	adam.meehan@gmail.com
+		

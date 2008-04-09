@@ -4,7 +4,7 @@ describe MockedFixtures::SchemaParser do
    
   before do
     @parser = MockedFixtures::SchemaParser
-    @parser.stub!(:schema_path).and_return(File.expand_path(File.dirname(__FILE__) + '/schema.rb'))
+    @parser.stub!(:schema_path).and_return(File.expand_path(File.dirname(__FILE__) + '/resources/schema.rb'))
   end
   
   it "should parser schema file and return hash" do
