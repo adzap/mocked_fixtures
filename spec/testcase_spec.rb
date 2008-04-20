@@ -1,7 +1,5 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-$: << File.dirname(__FILE__) + '/rspec_on_rails' << File.dirname(__FILE__)
-
 # These rspec_on_rails modules redefine the rspec example groups to inherit 
 # from Test::Unit::TestCase so we can still use rspec to test the test/unit 
 # extensions. Yay!

@@ -1,8 +1,9 @@
 require 'active_record/fixtures'
 class MockFixtures < Fixtures
+  attr_reader :connection
     
   class DummyConnection
-    cattr_accessor :schema
+    attr_accessor :schema
     
     # dummy column class which is used in Fixtures class insert_fixtures method
     class Column
@@ -12,22 +13,11 @@ class MockFixtures < Fixtures
       end
     end
     
-    def self.schema(path=nil)
-      @@schema ||= MockedFixtures::SchemaParser.load_schema(path)
+    def initialize
+      @schema  = @@schema ||= MockedFixtures::SchemaParser.load_schema
+      @columns = {}
     end
-    
-    def self.columns(table_name)
-      @@columns ||= schema[table_name.to_s].collect {|c| col = Column.new(c[0], c[1]) }
-    end
- 
-    def schema
-      self.class.schema
-    end
-    
-    def columns(table_name)
-      self.class.columns(table_name)
-    end
-    
+     
     def insert_fixture(fixture, table_name)
       # override to do nothing (NOP) as we are not using the database
     end
@@ -35,7 +25,7 @@ class MockFixtures < Fixtures
     def type_cast_fixture(fixture, table_name)
       fixture.to_hash.inject({}) do |new_hash, row|
         begin
-          type = schema[table_name.to_s].assoc(row[0])[1]
+          type = @schema[table_name.to_s][:columns].assoc(row[0])[1]
           new_hash[row[0].to_sym] = type_cast_value(type, row[1])
           new_hash
         rescue
@@ -62,6 +52,10 @@ class MockFixtures < Fixtures
         when :boolean   then column.value_to_boolean(value)
         else value
       end
+    end    
+    
+    def columns(table_name)
+      @columns[table_name] ||= @schema[table_name.to_s][:columns].collect {|c| Column.new(c[0], c[1]) }
     end
   end
   
@@ -77,8 +71,6 @@ class MockFixtures < Fixtures
     end
   end
   
-  attr_reader :connection
-  
   def initialize(table_name, class_name, fixture_path, file_filter = DEFAULT_FILTER_RE)
     @table_name, @fixture_path, @file_filter = table_name, fixture_path, file_filter
     @class_name = class_name ||
@@ -87,6 +79,14 @@ class MockFixtures < Fixtures
     @table_name = class_name.table_name if class_name.respond_to?(:table_name)
     @connection = DummyConnection.new
     read_fixture_files
+  end
+  
+  def has_primary_key_column?
+    @has_primary_key_column ||= !primary_key_name.nil?
+  end
+  
+  def primary_key_name
+    @primary_key_name ||= @connection.schema[@table_name.to_s][:primary_key]
   end
   
   def column_names

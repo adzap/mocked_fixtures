@@ -8,4 +8,33 @@
 	<pathentry path="GEM_LIB/actionpack-2.0.2/lib" type="var"/>
 	<pathentry path="GEM_LIB/actionwebservice-1.2.6/lib" type="var"/>
 	<pathentry path="GEM_LIB/activesupport-2.0.2/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-sqlserver-adapter-1.0.0.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-sqlserver-adapter-1.0.0.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-sqlserver-adapter-1.0.0.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-sqlserver-adapter-1.0.0.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-sqlserver-adapter-1.0.0.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-sqlserver-adapter-1.0.0.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-sqlserver-adapter-1.0.0.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-sqlserver-adapter-1.0.0.9216/lib" type="var"/>
+	<pathentry path="GEM_LIB/activerecord-2.0.2.9216/lib" type="var"/>
 </loadpath>
