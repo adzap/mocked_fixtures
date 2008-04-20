@@ -1,12 +1,10 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-require 'resources/company'
-require 'resources/employee'
-
 describe MockedFixtures do
+  mock_fixtures :companies
   
   before do
-    @fixture_path = File.expand_path(File.dirname(__FILE__) + '/resources')    
+    @fixture_path = File.expand_path(File.dirname(__FILE__) + '/resources')
     ActiveRecord::Base.connection.disconnect! if ActiveRecord::Base.connection.active?
   end
   
@@ -21,4 +19,9 @@ describe MockedFixtures do
     fixtures[0].primary_key_name.should == 'cid'
   end 
   
+  describe "Objects" do
+    it "should return values for column methods" do
+      mock_companies(:mega_corp).name.should == 'Mega Corporation'
+    end
+  end  
 end
