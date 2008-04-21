@@ -1,9 +1,9 @@
 require 'active_record/fixtures'
 class MockFixtures < Fixtures
   attr_reader :connection
-    
+  
   class DummyConnection
-    attr_accessor :schema
+    attr_accessor :schema, :loaded_fixtures, :current_fixture_label
     
     # dummy column class which is used in Fixtures class insert_fixtures method
     class Column
@@ -16,10 +16,13 @@ class MockFixtures < Fixtures
     def initialize
       @schema  = @@schema ||= MockedFixtures::SchemaParser.load_schema
       @columns = {}
+      @loaded_fixtures = {}
     end
      
+    # stores full fixture after association values loaded and type casting
     def insert_fixture(fixture, table_name)
-      # override to do nothing (NOP) as we are not using the database
+      loaded_fixtures[table_name] ||= {}
+      loaded_fixtures[table_name][@current_fixture_label] = type_cast_fixture(fixture, table_name)
     end
     
     def type_cast_fixture(fixture, table_name)
@@ -63,11 +66,11 @@ class MockFixtures < Fixtures
   # returns the array of MockFixtures instances. The insert_fixtures method
   # is necessary to get the superclass to do all the fancy associations work
   def self.create_fixtures(fixtures_directory, table_names, class_names = {})
-    table_names = [table_names].flatten.map { |n| n.to_s }
+    table_names = Array(table_names).flatten.map { |n| n.to_s }
     fixtures = table_names.map do |table_name|
       fixture = MockFixtures.new(File.split(table_name.to_s).last, class_names[table_name.to_sym], File.join(fixtures_directory, table_name.to_s))
       fixture.insert_fixtures
-      fixture.each {|label, f| fixture[label] = fixture.connection.type_cast_fixture(f, fixture.table_name) }
+      fixture.each {|label, f| fixture[label] = fixture.connection.loaded_fixtures[fixture.table_name][label] }
     end
   end
   
@@ -95,5 +98,14 @@ class MockFixtures < Fixtures
   
   def delete_existing_fixtures
     # override to do nothing (NOP) as we are not using the database
+  end
+  
+  alias :original_each :each  
+  def each
+    original_each do |label, fixture|
+      connection.current_fixture_label = label
+      yield label, fixture
+      connection.current_fixture_label = nil
+    end    
   end
 end
