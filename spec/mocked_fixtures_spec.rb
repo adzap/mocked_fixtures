@@ -2,10 +2,18 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe MockedFixtures do
   
-  before do
-    @fixture_path = File.expand_path(File.dirname(__FILE__) + '/resources')
+  before :all do
+    # just making sure we don't hit the database at all
     ActiveRecord::Base.connection.disconnect! if ActiveRecord::Base.connection.active?
   end
+  
+  after :all do
+    ActiveRecord::Base.connection.reconnect!
+  end  
+  
+  before do
+    @fixture_path = File.expand_path(File.dirname(__FILE__) + '/resources')    
+  end  
   
   it "should create fixtures" do
     fixtures = MockFixtures.create_fixtures(@fixture_path, [:companies])

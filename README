@@ -1,11 +1,17 @@
 MockedFixtures
 ==============
 
-This plugin adds the ability to use fixtures as mocked model objects rather than
-load in them into the database. So you can now reuse those thoughtfully crafted 
-fixtures but minus the database overhead. This particularly speeds up tests 
-where the database is not needed (or wanted) such as in controller and view 
-specs.
+Yes, lets laugh at those silly fixtures with their silly yaml or even comma 
+separated values! Hahaha! Don't they know how passe they are. All the cool kids
+are mocking their models and stubbing out the attributes. Get with the times 
+fixtures!
+
+Well actually fixtures still have their place. Especially with the foxy fixture
+extensions added to Rails Deux. This plugin adds the ability to use fixtures as 
+mocked model objects rather than load in them into the database. So you can now 
+reuse those thoughtfully crafted fixtures but minus the database overhead. This 
+particularly speeds up tests where the database is not needed (or wanted) such 
+as in controller and view specs.
 
 A mocked fixture is a mocked model object with all the model attributes stubbed
 out to return the values from the fixture if defined. If no fixture value was 
@@ -39,6 +45,11 @@ throw an 'unexpected message error', then this can make short work for you.
 
 Again none of this touches the database as all model attributes are read from
 schema.rb file. Nice, huh?!
+
+If you are using SQLServer adapter, included is a fix for AR to get the schema 
+dumper to correctly output the primary key in your schema.rb if other than id. 
+We need this to a avoid database hit. You will need to do a dump before using 
+this plugin! Oh man, that is some pre-requisite.
 
 
 Install
@@ -84,6 +95,12 @@ Now remember the mocked objects are just simple mocked models and the
 attributes only have readers not writers. This is the same behaviour as
 mock_model(YourModel) using rspec or flexmock(:model, YourModel),
 because thats what the mocks are created with.
+
+Todo
+====
+
+- Stub out associations methods and return mocked association object
+
 
 
 Feedback

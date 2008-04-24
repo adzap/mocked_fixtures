@@ -21,12 +21,12 @@ describe MockedFixtures::SchemaParser do
   end
   
   it "should return schema table with columns in array" do    
-    schema["companies"][:columns].should == [["cid", "integer"], 
-                                             ["name", "string"], 
+    schema["companies"][:columns].should == [["cid",        "integer"], 
+                                             ["name",       "string"], 
                                              ["created_at", "datetime"], 
                                              ["updated_at", "datetime"]]
 
-    schema["employees"][:columns].should == [["id", "integer"],
+    schema["employees"][:columns].should == [["id",         "integer"],
                                              ["company_id", "integer"],
                                              ["first_name", "string"],
                                              ["last_name",  "string"],
@@ -34,7 +34,7 @@ describe MockedFixtures::SchemaParser do
                                              ["updated_at", "datetime"]]
   end
   
-  it "should get primary key from table options" do
+  it "should get primary key from table definition options" do
     schema["companies"][:primary_key].should == 'cid' 
   end
 end
