@@ -7,7 +7,7 @@ require 'active_record'
 require 'active_support'
 
 require 'mocked_fixtures/schema_parser'
-require 'mocked_fixtures/mock_extensions'
+require 'mocked_fixtures/mocks/spec'
 require 'mocked_fixtures/testcase'
 require 'mocked_fixtures/mock_fixtures'
 
@@ -25,7 +25,7 @@ rescue
   puts 'ActiveRecord SQLServer Adapter not present'
 end
 
-Spec::Rails::Example::RailsExampleGroup.send(:include, MockedFixtures::MockExtensions)
+Spec::Rails::Example::RailsExampleGroup.send(:include, MockedFixtures::Mocks::Spec)
 
 MockedFixtures::SchemaParser.schema_path = File.expand_path(File.dirname(__FILE__) + '/resources/schema.rb')
 

@@ -1,2 +1,5 @@
-- option override normal fixture method with mock fixture accessor
+Todo
+====
+- Stub out associations methods and return mocked association fixtures
 - config option for global mock fixtures
+- support more mock libraries

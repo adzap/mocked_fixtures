@@ -31,10 +31,10 @@ describe MockedFixtures do
     fixtures[0].primary_key_name.should == 'cid'
   end  
   
-  describe "Objects" do
+  describe "mocked objects" do
     mock_fixtures :companies
     
-    it "should return values for column methods" do
+    it "should return values for column methods from fixture" do
       mock_companies(:mega_corp).name.should == 'Mega Corporation'
     end
   end  

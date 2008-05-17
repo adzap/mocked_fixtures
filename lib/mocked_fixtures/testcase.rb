@@ -1,4 +1,4 @@
-# Many of these methods are renamed and modified form the Rails Fixtures
+# Many of these methods are renamed and modified from the Rails Fixtures
 # TestCase class extensions.
 require 'active_record/fixtures'
 module Test #:nodoc:
@@ -80,7 +80,7 @@ module Test #:nodoc:
             instances = fixtures.map do |fixture|
               if self.class.loaded_mock_fixtures[table_name][fixture.to_s]
                 # get fixture and create a mock with it. Include all attributes
-                # in mock and the errors stub and mock object
+                # in mock and the errors stub.
                 @mock_fixture_cache[table_name][fixture] ||= create_mock(table_name, fixture)
               else
                 raise StandardError, "No mocked fixture with name '#{fixture}' found for table '#{table_name}'"
