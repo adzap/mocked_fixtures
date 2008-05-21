@@ -2,3 +2,7 @@ adam:
   company: mega_corp
   first_name: Adam
   last_name: Meehan
+jane:
+  company: mega_corp
+  first_name: Jane
+  last_name: Doe

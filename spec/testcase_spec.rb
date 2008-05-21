@@ -20,14 +20,10 @@ describe Test::Unit::TestCase do
   end
   
   describe "mock fixture accessors setup" do
-    it "should define mock_company method" do
-      self.class.setup_mock_fixture_accessors(['company'])
-      self.methods.should include('mock_company')
+    it "should define mock_companies method" do
+      self.class.setup_mock_fixture_accessors(['companies'])
+      self.methods.should include('mock_companies')
     end
   end
-  
-  describe "mock fixture loading" do
-    
-  end  
   
 end

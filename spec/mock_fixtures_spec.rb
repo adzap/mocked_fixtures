@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-describe MockedFixtures do
+describe MockFixtures do
   
   before :all do
     # just making sure we don't hit the database at all
@@ -32,10 +32,18 @@ describe MockedFixtures do
   end  
   
   describe "mocked objects" do
-    mock_fixtures :companies
+    mock_fixtures :companies, :employees
     
     it "should return values for column methods from fixture" do
       mock_companies(:mega_corp).name.should == 'Mega Corporation'
+    end
+    
+    it "should return all named fixtures as array" do
+      mock_employees(:adam, :jane).size.should == 2
+    end
+    
+    it "should return all fixtures when passed :all option" do
+      mock_employees(:all).size.should == 2
     end
   end  
 end

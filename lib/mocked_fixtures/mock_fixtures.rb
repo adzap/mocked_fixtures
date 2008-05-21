@@ -21,7 +21,8 @@ class MockFixtures < Fixtures
      
     # stores full fixture after association values loaded and type casting
     def insert_fixture(fixture, table_name)
-      loaded_fixtures[table_name] = { @current_fixture_label => type_cast_fixture(fixture, table_name) }
+      loaded_fixtures[table_name] ||= {}
+      loaded_fixtures[table_name][@current_fixture_label] = type_cast_fixture(fixture, table_name)
     end
     
     def type_cast_fixture(fixture, table_name)
