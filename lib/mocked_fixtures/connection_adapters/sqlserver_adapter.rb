@@ -1,5 +1,6 @@
 # This adds the method to find the primary key for the schema dumper so that
-# the schema will correctly define the primary key
+# the schema will correctly define the primary key. Need to get this into the
+# real adapter obviously, though the project seems almost dead.
 module MockedFixtures
   module ConnectionAdapters
     module SQLServerAdapter

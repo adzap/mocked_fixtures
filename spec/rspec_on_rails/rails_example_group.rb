@@ -12,7 +12,7 @@ module Spec
           teardown_fixtures if self.respond_to?(:teardown_fixtures)
         end
         
-#        include Spec::Rails::Matchers
+        include Spec::Rails::Matchers
 
         @@model_id = 1000
         # Creates a mock object instance for a +model_class+ with common

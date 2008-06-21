@@ -2,16 +2,12 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe MockFixtures do
   
-  before :all do
+  before(:all) do
     # just making sure we don't hit the database at all
-    ActiveRecord::Base.connection.disconnect! if ActiveRecord::Base.connection.active?
+    ActiveRecord::Base.connection.disconnect! rescue nil
   end
   
-  after :all do
-    ActiveRecord::Base.connection.reconnect!
-  end  
-  
-  before do
+  before(:each) do
     @fixture_path = File.expand_path(File.dirname(__FILE__) + '/resources')    
   end  
   
