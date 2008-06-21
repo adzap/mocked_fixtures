@@ -1,10 +1,10 @@
 require 'mocked_fixtures/version'
 
-AUTHOR = 'FIXME full name'  # can also be an array of Authors
-EMAIL = "FIXME email"
-DESCRIPTION = "description of gem"
+AUTHOR = 'Adam Meehan'  # can also be an array of Authors
+EMAIL = "adam.meehan@gmail.com"
+DESCRIPTION = "Use Rails fixtures as mocked model objects without database access"
 GEM_NAME = 'mocked_fixtures' # what ppl will type to install your gem
-RUBYFORGE_PROJECT = 'mocked_fixtures' # The unix name for your project
+RUBYFORGE_PROJECT = 'mockedfixtures' # The unix name for your project
 HOMEPATH = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
 DOWNLOAD_PATH = "http://rubyforge.org/projects/#{RUBYFORGE_PROJECT}"
 EXTRA_DEPENDENCIES = [
@@ -13,7 +13,7 @@ EXTRA_DEPENDENCIES = [
 
 @config_file = "~/.rubyforge/user-config.yml"
 @config = nil
-RUBYFORGE_USERNAME = "unknown"
+RUBYFORGE_USERNAME = "adzap"
 def rubyforge_username
   unless @config
     begin
