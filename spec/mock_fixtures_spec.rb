@@ -34,6 +34,11 @@ describe MockFixtures do
       mock_companies(:mega_corp).name.should == 'Mega Corporation'
     end
     
+    it "should have attributes not in fixture stubbed to return nil" do
+      mock_companies(:mega_corp).should respond_to(:address)
+      mock_companies(:mega_corp).address.should be_nil
+    end
+    
     it "should return all named fixtures as array" do
       mock_employees(:adam, :jane).size.should == 2
     end

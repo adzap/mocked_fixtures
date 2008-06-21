@@ -22,7 +22,8 @@ describe MockedFixtures::SchemaParser do
   
   it "should return schema table with columns in array" do    
     schema["companies"][:columns].should == [["cid",        "integer"], 
-                                             ["name",       "string"], 
+                                             ["name",       "string"],
+                                             ["address",    "string"],
                                              ["created_at", "datetime"], 
                                              ["updated_at", "datetime"]]
 
