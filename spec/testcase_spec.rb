@@ -1,12 +1,5 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-# These rspec_on_rails modules redefine the rspec example groups to inherit 
-# from Test::Unit::TestCase so we can still use rspec to test the test/unit 
-# extensions. Yay!
-require 'rspec_on_rails/example_group_factory'
-require 'rspec_on_rails/example_group_methods'
-require 'rspec_on_rails/rails_example_group'
-
 describe Test::Unit::TestCase do
   
   describe "additional mock fixtures methods" do
