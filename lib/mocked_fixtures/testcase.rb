@@ -1,36 +1,39 @@
 # Many of these methods are renamed and modified from the Rails Fixtures
 # TestCase class extensions.
-require 'active_record/fixtures'
-module Test #:nodoc:
-  module Unit #:nodoc:
-    class TestCase #:nodoc:
+module Test
+  module Unit
+    class TestCase
       
-      superclass_delegating_accessor :mock_fixture_table_names
+      superclass_delegating_accessor :mock_fixture_table_names      
+      superclass_delegating_accessor :loaded_mock_fixtures
+      superclass_delegating_accessor :mock_fixtures_loaded
+      superclass_delegating_accessor :global_mock_fixtures
+
       self.mock_fixture_table_names = []
+      self.loaded_mock_fixtures = {}
+      self.mock_fixtures_loaded = false
       
-      cattr_accessor :loaded_mock_fixtures
-      @@loaded_mock_fixtures = {}
-      
-      cattr_accessor :mock_fixtures_loaded
-      @@mock_fixtures_loaded = false
+      def self.global_mock_fixtures=(*table_names)
+        table_names = self.all_fixture_table_names if table_names.first == :all
+        self.mock_fixtures table_names.flatten.map { |n| n.to_s }
+      end
       
       def self.mock_fixtures(*table_names)
-        if table_names.first == :all
-          table_names = Dir["#{fixture_path}/*.yml"] + Dir["#{fixture_path}/*.csv"]
-          table_names.map! { |f| File.basename(f).split('.')[0..-2].join('.') }
-        else
-          table_names = table_names.flatten.map { |n| n.to_s }
-        end
+        table_names = self.all_fixture_table_names if table_names.first == :all
 
-        self.mock_fixture_table_names = table_names
+        table_names = table_names.flatten.map { |n| n.to_s }
+
+        self.mock_fixture_table_names |= table_names
         
-        #this is called as is from the Rails Fixtures class
         require_fixture_classes(table_names)
-        
         setup_mock_fixture_accessors(table_names)
       end
       
-       # Only load mock fixtures which are not already loaded
+      def self.all_fixture_table_names
+        table_names = Dir["#{fixture_path}/*.yml"] + Dir["#{fixture_path}/*.csv"]
+        table_names.map { |f| File.basename(f).split('.')[0..-2].join('.') }
+      end
+      
       def setup_with_mock_fixtures
         fixtures_to_load = self.class.mock_fixture_table_names - self.class.loaded_mock_fixtures.keys
         return if fixtures_to_load.empty?
@@ -79,8 +82,7 @@ module Test #:nodoc:
             
             instances = fixtures.map do |fixture|
               if self.class.loaded_mock_fixtures[table_name][fixture.to_s]
-                # get fixture and create a mock with it. Include all attributes
-                # in mock and the errors stub.
+                # get fixture and create a mock with it
                 @mock_fixture_cache[table_name][fixture] ||= create_mock(table_name, fixture)
               else
                 raise StandardError, "No mocked fixture with name '#{fixture}' found for table '#{table_name}'"
@@ -110,8 +112,7 @@ module Test #:nodoc:
         mock_model(model_class, { :all_attributes => true, :add_errors => true }.merge(fixture) )
       end
       
-      # Loads fixtures to be mocked and stores them in class variable as they
-      # won't change.
+      # Loads fixtures to be mocked and cache them in class variable
       def load_mock_fixtures(fixtures_to_load)
         fixtures = MockFixtures.create_fixtures(fixture_path, fixtures_to_load, fixture_class_names)
         unless fixtures.nil?
