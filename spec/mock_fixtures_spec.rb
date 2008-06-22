@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-describe MockFixtures do
+describe MockedFixtures::MockFixtures do
   
   before(:all) do
     # just making sure we don't hit the database at all
@@ -12,18 +12,18 @@ describe MockFixtures do
   end  
   
   it "should create fixtures" do
-    fixtures = MockFixtures.create_fixtures(@fixture_path, [:companies])
+    fixtures = MockedFixtures::MockFixtures.create_fixtures(@fixture_path, [:companies])
     fixtures.should have(1).instance_of(Fixture)
     fixtures.first['mega_corp'][:name].should == 'Mega Corporation'
   end
 
   it "should create fixtures with association values inserted" do
-    fixtures = MockFixtures.create_fixtures(@fixture_path, [:employees])
+    fixtures = MockedFixtures::MockFixtures.create_fixtures(@fixture_path, [:employees])
     fixtures.first['adam'][:company_id].should == Fixtures.identify('mega_corp')
   end
 
   it "should return primary key for fixture table" do
-    fixtures = MockFixtures.create_fixtures(@fixture_path, [:companies])
+    fixtures = MockedFixtures::MockFixtures.create_fixtures(@fixture_path, [:companies])
     fixtures[0].primary_key_name.should == 'cid'
   end  
   

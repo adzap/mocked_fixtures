@@ -8,6 +8,7 @@ module Test
       superclass_delegating_accessor :loaded_mock_fixtures
       superclass_delegating_accessor :mock_fixtures_loaded
       superclass_delegating_accessor :global_mock_fixtures
+      superclass_delegating_accessor :mocked_fixtures_mock_with
 
       self.mock_fixture_table_names = []
       self.loaded_mock_fixtures = {}
@@ -68,7 +69,7 @@ module Test
       end
      
       # This creates the fixture accessors and retrieves the fixture and creates
-      # mock object from it. Mocked fixture is then cached.
+      # mock object from it. Mock fixture is then cached.
       def self.setup_mock_fixture_accessors(table_names = nil)
         (table_names || mock_fixture_table_names).each do |table_name|
           table_name = table_name.to_s.tr('.', '_')
@@ -80,12 +81,14 @@ module Test
               fixtures = self.class.loaded_mock_fixtures[table_name].keys
             end
             
-            instances = fixtures.map do |fixture|
-              if self.class.loaded_mock_fixtures[table_name][fixture.to_s]
-                # get fixture and create a mock with it
-                @mock_fixture_cache[table_name][fixture] ||= create_mock(table_name, fixture)
+            instances = fixtures.map do |fixture_name|
+              if fixture = self.class.loaded_mock_fixtures[table_name][fixture_name.to_s]
+                model_class    = self.class.loaded_mock_fixtures[table_name].send(:model_class)
+                mock_type      = self.class.mocked_fixtures_mock_with
+                # create mock and cache
+                @mock_fixture_cache[table_name][fixture_name] ||= MockedFixtures::MockFactory.create_mock(mock_type, model_class, fixture, self)
               else
-                raise StandardError, "No mocked fixture with name '#{fixture}' found for table '#{table_name}'"
+                raise StandardError, "No mock fixture with name '#{fixture}' found for table '#{table_name}'"
               end
             end
             instances.size == 1 ? instances.first : instances
@@ -93,28 +96,9 @@ module Test
         end
       end
       
-      # Create mock object from fixture
-      def create_mock(table_name, fixture_name)
-        table_fixtures = self.class.loaded_mock_fixtures[table_name]
-        model_class    = table_fixtures.send(:model_class)
-        columns        = table_fixtures.connection.schema[table_name]
-        fixture        = table_fixtures[fixture_name.to_s]
-        if defined?(Spec::Rails::Example::RailsExampleGroup) &&
-            self.class < Spec::Rails::Example::RailsExampleGroup
-          
-          create_rspec_mock(model_class, fixture)
-        else
-          # other mocking libraries to support
-        end
-      end
-      
-      def create_rspec_mock(model_class, fixture)
-        mock_model(model_class, { :all_attributes => true, :add_errors => true }.merge(fixture) )
-      end
-      
       # Loads fixtures to be mocked and cache them in class variable
       def load_mock_fixtures(fixtures_to_load)
-        fixtures = MockFixtures.create_fixtures(fixture_path, fixtures_to_load, fixture_class_names)
+        fixtures = MockedFixtures::MockFixtures.create_fixtures(fixture_path, fixtures_to_load, fixture_class_names)
         unless fixtures.nil?
           fixtures.each { |f| self.class.loaded_mock_fixtures[f.table_name] = f }
         end

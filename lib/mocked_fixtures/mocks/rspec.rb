@@ -2,7 +2,7 @@
 # for all attributes and the errors method
 module MockedFixtures
   module Mocks
-    module Spec
+    module Rspec
     
       def self.included(base)
         base.class_eval do
@@ -31,6 +31,16 @@ module MockedFixtures
         end
       end
       
-    end
+      module Configuration
+        def global_mock_fixtures
+          Test::Unit::TestCase.mock_fixture_table_names
+        end
+        
+        def global_mock_fixtures=(fixtures)
+          Test::Unit::TestCase.mock_fixtures(*fixtures)
+        end
+      end      
+
+    end   
   end
 end
