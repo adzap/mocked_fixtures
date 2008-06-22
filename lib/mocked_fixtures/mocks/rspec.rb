@@ -27,17 +27,6 @@ module MockedFixtures
           mock_model_without_attributes(model_class, options_and_stubs)
         end
       end
-      
-      module Configuration
-        def global_mock_fixtures
-          Test::Unit::TestCase.mock_fixture_table_names
-        end
-        
-        def global_mock_fixtures=(fixtures)
-          Test::Unit::TestCase.mock_fixtures(*fixtures)
-        end
-      end      
-
     end   
   end
 end
