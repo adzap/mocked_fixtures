@@ -13,21 +13,18 @@ module MockedFixtures
       
       module InstanceMethods
         def mock_model_with_attributes(model_class, options_and_stubs = {})
-          attributes = options_and_stubs.delete(:all_attributes)
-          errors     = options_and_stubs.delete(:add_errors)
-          object     = mock_model_without_attributes(model_class, options_and_stubs)
-          if attributes
+          if options_and_stubs.delete(:all_attributes)
             schema = MockedFixtures::SchemaParser.load_schema
             table  = model_class.table_name
-            schema[table][:columns].each { |column| object.stub!(column[0].to_sym) unless object.respond_to?(column[0]) }
+            schema[table][:columns].each { |column| options_and_stubs[column[0].to_sym] = nil unless options_and_stubs.has_key?(column[0].to_sym) }
           end
-          if errors
+          if options_and_stubs.delete(:add_errors)
             errors = []
             errors.stub!(:count).and_return(0)
             errors.stub!(:on).and_return(nil)
-            object.stub!(:errors).and_return(errors)
+            options_and_stubs.reverse_merge!(:errors => errors)
           end
-          object
+          mock_model_without_attributes(model_class, options_and_stubs)
         end
       end
       
