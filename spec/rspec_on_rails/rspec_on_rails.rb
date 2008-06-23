@@ -4,7 +4,12 @@ module Spec
   end
 end
 
-require 'rspec_on_rails/example_group_factory'
-require 'rspec_on_rails/example_group_methods'
-require 'rspec_on_rails/rails_example_group'
+module ActionView
+  class Base
+    def self.cache_template_extensions=(arg)
+    end
+  end
+end
 
+require 'rspec_on_rails/mocks'
+require 'rspec_on_rails/rails_example_group'
