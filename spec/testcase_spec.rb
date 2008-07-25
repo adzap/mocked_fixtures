@@ -39,4 +39,31 @@ describe Test::Unit::TestCase, "extended with mocked_fixtures" do
       klass.mock_fixture_table_names.should == ['employees', 'companies']
     end
   end
+  
+  describe "mocked fixture accessor" do     
+    mock_fixtures :companies, :employees    
+    
+    before(:all) do
+      Test::Unit::TestCase.mocked_fixtures_mock_with = :rspec
+    end
+    
+    it "should return single mock fixture object" do
+      mock_companies(:mega_corp).name.should == 'Mega Corporation'
+    end
+    
+    it "should return all named fixtures as array" do
+      mock_employees(:adam, :jane).size.should == 2
+    end
+    
+    it "should return all fixtures when passed :all option" do
+      mock_employees(:all).size.should == 2
+    end
+    
+    #it "should execute block on mock object requested" do
+    #  employee = mock_employees(:adam) do |employee|
+    #    employee.stub!(:last_name).and_return(employee.last_name.upcase)
+    #  end      
+    #  employee.last_name.should == "MEEHAN"
+    #end
+  end
 end
