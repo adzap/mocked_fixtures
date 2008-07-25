@@ -1,9 +1,11 @@
 = mocked_fixtures
 
 * Project page: http://mockedfixtures.rubyforge.com/
-* Contribute:   http://github.com/adzap/mocked_fixtures
 * Tickets:      http://adzap.lighthouseapp.com/
+* Contribute:   http://github.com/adzap/mocked_fixtures
 * Discuss:      http://groups.google.com/mocked_fixtures
+* Blog:         http://duckpunching.com/
+
 
 == DESCRIPTION:
 
@@ -13,69 +15,111 @@ are mocking and stubbing. Get with the times fixtures!
 
 Well actually fixtures still have their place. Especially with the foxy fixtures
 extensions added to Rails 2.0, they are now much easier to use. Problem is the 
-undesirably database overhead that comes with reloading your fixtures for every 
-test. For controller and view tests the database layer should is not be your 
-concern and violates good test isolation.
+undesirable database overhead that comes with reloading your fixtures for every 
+test. Also, in controller and view tests, the database layer is unnecessary and 
+using mock objects is often preferred.
 
-This plugin helps by allowing you use your fixtures as disconnected mocked 
-objects which never touch the database when loaded or used. So you can now 
-keep using those thoughtfully crafted fixtures in your controller and view tests
-but minus the database overhead.
+This poses another challenge of the often tedious creation those mocks to return
+the values you need for testsm much like you did for your fixtures. But what if 
+you could reuse those fixtures as mocks where you don't need real ActiveRecord 
+objects. Well thats where mocked_fixtures comes in.
 
-A mocked fixture is a mocked model object with all the model attributes stubbed
+This plugin helps by allowing you use your fixtures as disconnected mock objects
+which never touch the database when loaded or used. So you can now keep using 
+those thoughtfully crafted fixtures in your controller and view tests but minus
+the database overhead.
+
+A mocked fixture is a mock model object with all the model attributes stubbed
 out to return the values from the fixture if defined. If no fixture value was 
 defined then a nil is returned for the attribute method as you would expect.
 There are no attribute setters defined on the object as they are left for you 
 to do as necessary.
 
-The attributes for each model are read from you schema.rb file to avoid any 
+The attributes for each model are read from the schema.rb file to avoid any 
 database access at all!
 
-== FEATURES/DISCLAIMER:
+== FEATURES/PROBLEMS:
 
-* reuse your fixtures without any database overhead
-* adds feature to common mocking libraries to quickly create empty mocked model
-  with all attributes methods stubbed out to return nil
-* same familiar style of using regular fixtures
-* works with other testing frameworks such as rspec_on_rails, test/unit, 
-  test/spec and any testing library which uses test/unit
+ * Reuse your fixtures as mock model objects without database overhead
+ * Adds feature to supported mocking libraries to quickly create empty mocked
+   model with all attributes methods stubbed out. Supported are Rspec, flexmock
+   and mocha.
+ * Same familiar style of using regular fixtures
+ * Works with popular testing frameworks such as Rspec (with rspec_on_rails),
+   shoulda and any testing library which uses good old test/unit as its base.
 
-DISCLAIMER: 
-This plugin is tightly coupled to the ActiveRecord fixtures 
-implementation to get full benefit of the foxy fixtures features, therefore 
-will likely break with changes to the fixtures code.
+What it doesn't do:
+
+ * Touch the database. This means that the fixtures are not inserted in the 
+   tables, thats not what the plugin is for.
+ * Create mock objects with the attribute setters. Only reader methods.
 
 == SYNOPSIS:
 
 To get going you need to require the plugin at the top of your test_helper or 
-spec_helper file
-
+spec_helper file. For test/unit add it after the test/unit require like so
+  
+  require 'test/unit'
   require 'mocked_fixtures'
 
-If you are using Rspec then this line must go *above* the require for 
+If you are using Rspec then this line must go *above* the require for
 rspec_on_rails, like so
 
+  require 'spec'
   require 'mocked_fixtures'
   require 'spec/rails'
-	
-Now if you have a Company model and fixture for the model like this
 
-megacorp:
-  name: Mega Corporation
-  moto: Do Evil
-	
-So just like normal fixtures you declare which ones you want to use in your test
-or spec
+If you are using test/unit then you need specify which mocking library you 
+are using. You need to add this to your test_helper
 
-	mock_fixtures :companies
+  class Test::Unit::TestCase
+    
+    # can be one of :flexmock or :mocha
+    self.mocked_fixtures_mock_with = :flexmock  
+  end
+  
+If you are using Rspec then the mocking library will be automatically set to
+default Rspec mocking library or which ever one you have set using the config
+mock_with option. If you are using something other than the supported libraries
+then you get an error alerting the plugin can't be used with that library.
+  
+On to the good stuff. Now if you have a Company model and fixture for the model
+like this
 
-	before do
-		@company = mock_companies(:megacorp)
-		@company.moto # returns 'Do Evil'
-	end
+  megacorp:
+    name: Mega Corporation
+    moto: Do Evil
 
-You get back the 'megacorp' fixture as a mocked model object and calling any 
-attribute method will return the value defined in you fixture. Easy!
+Just like normal fixtures you declare which ones you want to use in your test
+or spec at the top
+
+  class MyTest < Test::Unit:TestCase
+	  mock_fixtures :companies
+
+	  def setup
+		  @company = mock_companies(:megacorp)		  
+	  end
+	  
+	  def test_does_something
+	    assert_equal @company.moto, 'Do Evil'
+	  end
+  end
+  
+All the attributes will be stubbed to return the values from the fixture. The 
+fixture is generated using the internal Rails fixtures class, so any of fixture
+tricks, such as association labels and automatically generated ids, will work.
+
+If you want more than one fixture, then like normal fixtures you list the 
+fixture keys to get back an array of the objects.
+
+  @companies = mock_companies(:megacorp, :bigstuff)
+
+
+To quickly grab all of the fixtures you call use the :all option
+
+  @companies = mock_companies(:all)
+
+
 
 Thats all for now, so mock on!
 
@@ -90,15 +134,11 @@ You then need to do a dump. Um, keep your pants on, I mean a database dump with
   
   rake db:schema:dump
 
-Now the schema.rb file should be complete if the above applies to you.
+Now the schema.rb file should be complete.
 
 == REQUIREMENTS:
 
-* test/unit
-
-and one of:
-
-* spec/mock (included with Rspec)
+* Spec::Mock (included with Rspec)
 * flexmock
 * mocha
 
