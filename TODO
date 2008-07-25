@@ -1,5 +1,6 @@
 Todo
 ====
+- Blocks for mock fixture accessor to set custom values
+- autoload mocking for rspec using mock_with at run stage
+- fix schema load to cache schema change method to just schema
 - Stub out associations methods and return mocked association fixtures
-- config option for global mock fixtures
-- support more mock libraries
