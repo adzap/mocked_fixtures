@@ -9,8 +9,8 @@ module MockedFixtures
         Test::Unit::TestCase.mock_fixtures(*fixtures)
       end
       
-      def mocked_fixtures_mock_with=(mock_framework)
-        Test::Unit::TestCase.mocked_fixtures_mock_with = mock_framework
+      def mock_fixtures_with=(mock_framework)
+        Test::Unit::TestCase.mock_fixtures_with = mock_framework
       end
     end
   end

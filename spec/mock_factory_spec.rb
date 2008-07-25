@@ -40,7 +40,6 @@ describe MockedFixtures::MockFactory do
       end
       
       it "should create mock with to_param stubbed to id as string" do
-        puts "#{type} " + the_mock.to_param
         the_mock.to_param.should == "6"
       end
       

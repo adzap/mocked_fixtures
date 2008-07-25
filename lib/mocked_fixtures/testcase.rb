@@ -19,7 +19,7 @@ module Test
         self.mock_fixtures table_names.flatten.map { |n| n.to_s }
       end
       
-      def self.mocked_fixtures_mock_with=(mock_framework)
+      def self.mock_fixtures_with=(mock_framework)
         require "mocked_fixtures/mocks/#{mock_framework}"
         self.mocked_fixtures_mock_framework = mock_framework
         unless mock_framework == :rspec
