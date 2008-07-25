@@ -7,7 +7,7 @@ require 'mocked_fixtures/mock_factory'
 require 'mocked_fixtures/mock_connection'
 require 'mocked_fixtures/version'
 
-if defined?(Spec::Example::RailsExampleGroup)
+if defined?(Spec::Example)
   require 'mocked_fixtures/spec/configuration'
 end
 
