@@ -75,7 +75,7 @@ are using. You need to add this to your test_helper
   class Test::Unit::TestCase
     
     # can be one of :flexmock or :mocha
-    self.mocked_fixtures_mock_with = :flexmock  
+    self.mock_fixtures_with = :flexmock  
   end
   
 If you are using Rspec then the mocking library will be automatically set to
