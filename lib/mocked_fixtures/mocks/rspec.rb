@@ -1,4 +1,4 @@
-# rspec_on_rails mock_model extensions to add the stubs
+# rspec-rails mock_model extensions to add the stubs
 # for all attributes and the errors method
 module MockedFixtures
   module Mocks
@@ -8,6 +8,7 @@ module MockedFixtures
         base.class_eval do
           include InstanceMethods
           alias_method_chain :mock_model, :attributes
+          alias_method :mock_model_with_rspec, :mock_model_with_attributes
         end
       end
       
@@ -27,6 +28,9 @@ module MockedFixtures
           mock_model_without_attributes(model_class, options_and_stubs)
         end
       end
-    end   
+      
+    end
   end
 end
+
+Spec::Rails::Example::RailsExampleGroup.send(:include, MockedFixtures::Mocks::Rspec)

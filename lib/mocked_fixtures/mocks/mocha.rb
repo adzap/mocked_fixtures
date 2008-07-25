@@ -1,35 +1,45 @@
 module MockedFixtures
   module Mocks
     module Mocha
-      def self.included(base)
-        base.class_eval do
-          include InstanceMethods
-          alias_method_chain :stub, :attributes
+    
+      def mock_model_with_mocha(model_class, options_and_stubs={})
+        all_attributes = options_and_stubs.delete(:all_attributes)
+        add_errors     = options_and_stubs.delete(:add_errors)
+        if all_attributes
+          schema = MockedFixtures::SchemaParser.load_schema
+          table  = model_class.table_name
+          schema[table][:columns].each { |column| options_and_stubs[column[0].to_sym] = nil unless options_and_stubs.has_key?(column[0].to_sym) }
         end
-      end
-      
-      module InstanceMethods
-        def stub_with_attributes(*args)
-          return mock_without_attributes(*args) unless args.first < ActiveRecord::Base
-          model_class = args.shift
-          if options_and_stubs = args.first          
-            all_attributes = options_and_stubs.delete(:all_attributes)
-            add_errors     = options_and_stubs.delete(:add_errors)
-            if all_attributes
-              schema = MockedFixtures::SchemaParser.load_schema
-              table  = model_class.table_name
-              schema[table][:columns].each { |column| options_and_stubs[column[0].to_sym] = nil unless options_and_stubs.has_key?(column[0].to_sym) }
-            end
-            if add_errors
-              errors = []
-              errors.stubs(:count).returns(0)
-              errors.stubs(:on).returns(nil)
-              options_and_stubs.reverse_merge!(:errors => errors)
-            end
+        if add_errors
+          errors = []
+          errors.stubs(:count).returns(0)
+          errors.stubs(:on).returns(nil)
+          options_and_stubs.reverse_merge!(:errors => errors)
+        end
+        options_and_stubs.reverse_merge!(
+          :id => options_and_stubs[:id],
+          :to_param => options_and_stubs[:id].to_s,
+          :new_record? => false
+        )
+        obj = stub("#{model_class}_#{options_and_stubs[:id]}", options_and_stubs)
+         m.instance_eval <<-CODE
+          def is_a?(other)
+            #{model_class}.ancestors.include?(other)
           end
-          stub_without_attributes("#{model_class}_#{options_and_stubs[:id]}", options_and_stubs)
-        end
+          def kind_of?(other)
+            #{model_class}.ancestors.include?(other)
+          end
+          def instance_of?(other)
+            other == #{model_class}
+          end
+          def class
+            #{model_class}
+          end
+        CODE
+        yield obj if block_given?
+        obj
       end
+
     end
   end
 end
