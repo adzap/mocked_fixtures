@@ -4,6 +4,7 @@ require 'mocked_fixtures/testcase'
 require 'mocked_fixtures/schema_parser'
 require 'mocked_fixtures/mock_fixtures'
 require 'mocked_fixtures/mock_factory'
+require 'mocked_fixtures/mock_connection'
 require 'mocked_fixtures/version'
 
 if defined?(Spec::Example::RailsExampleGroup)
