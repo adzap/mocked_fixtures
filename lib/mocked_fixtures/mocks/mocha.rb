@@ -1,3 +1,4 @@
+require 'mocha'
 module MockedFixtures
   module Mocks
     module Mocha
@@ -22,7 +23,7 @@ module MockedFixtures
           :new_record? => false
         )
         obj = stub("#{model_class}_#{options_and_stubs[:id]}", options_and_stubs)
-         m.instance_eval <<-CODE
+        obj.instance_eval <<-CODE
           def is_a?(other)
             #{model_class}.ancestors.include?(other)
           end
@@ -36,7 +37,6 @@ module MockedFixtures
             #{model_class}
           end
         CODE
-        yield obj if block_given?
         obj
       end
 
