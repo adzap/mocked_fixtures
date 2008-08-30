@@ -1,3 +1,4 @@
+require 'flexmock/test_unit'
 module MockedFixtures
   module Mocks
     module Flexmock
@@ -15,11 +16,16 @@ module MockedFixtures
           errors = flexmock(Array.new, :count => 0, :on => nil)
           options_and_stubs.reverse_merge!(:errors => errors)
         end
+        mock_helper = FlexMock::MockContainerHelper.new
+        id = options_and_stubs[:id] || mock_helper.next_id
         options_and_stubs.reverse_merge!({        
           :id => id,
           :to_param => id.to_s,
         })
-        flexmock(:model, model_class, options_and_stubs)
+        
+        mock = flexmock("#{model_class}_#{id}", options_and_stubs)
+        mock_helper.add_model_methods(mock, model_class, id)
+        mock
       end
       
     end
