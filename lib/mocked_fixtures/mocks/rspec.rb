@@ -17,7 +17,11 @@ module MockedFixtures
           if options_and_stubs.delete(:all_attributes)
             schema = MockedFixtures::SchemaParser.load_schema
             table  = model_class.table_name
-            schema[table][:columns].each { |column| options_and_stubs[column[0].to_sym] = nil unless options_and_stubs.has_key?(column[0].to_sym) }
+            schema[table][:columns].each { |column| 
+              unless options_and_stubs.has_key?(column[0].to_sym) || column[0] == model_class.primary_key
+                options_and_stubs[column[0].to_sym] = nil  
+              end
+            }
           end
           if options_and_stubs.delete(:add_errors)
             errors = []
