@@ -138,6 +138,8 @@ Now the schema.rb file should be complete.
 
 == REQUIREMENTS:
 
+At least one of:
+
 * Spec::Mock (included with Rspec)
 * flexmock
 * mocha
