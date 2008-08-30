@@ -84,8 +84,8 @@ module Test
             
             instances = fixtures.map do |fixture_name|
               if fixture = self.class.loaded_mock_fixtures[table_name][fixture_name.to_s]
-                model_class    = self.class.loaded_mock_fixtures[table_name].send(:model_class)
-                mock_type      = self.class.mocked_fixtures_mock_framework
+                model_class = self.class.loaded_mock_fixtures[table_name].send(:model_class)
+                mock_type   = self.class.mocked_fixtures_mock_framework
 
                 @mock_fixture_cache[table_name][fixture_name] ||= MockedFixtures::MockFactory.create_mock(mock_type, model_class, fixture, self)
               else
