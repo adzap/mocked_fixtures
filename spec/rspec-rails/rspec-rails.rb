@@ -11,5 +11,5 @@ module ActionView
   end
 end
 
-require 'rspec_on_rails/mocks'
-require 'rspec_on_rails/rails_example_group'
+require 'rspec-rails/mocks'
+require 'rspec-rails/rails_example_group'

@@ -12,7 +12,7 @@ describe MockedFixtures::MockFactory do
       attr_accessor :a_mock
       
       before do
-        @a_mock = MockedFixtures::MockFactory.create_mock(type, Company, @fixture, self)        
+        @a_mock = MockedFixtures::MockFactory.create_mock(type, Company, @fixture, self)
       end
       
       it "should create mock fixture object" do        

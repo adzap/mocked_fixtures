@@ -44,7 +44,7 @@ describe Test::Unit::TestCase, "extended with mocked_fixtures" do
     mock_fixtures :companies, :employees    
     
     before(:all) do
-      Test::Unit::TestCase.mock_fixtures_with = :rspec
+      Test::Unit::TestCase.mock_fixtures_with :rspec
     end
     
     it "should return single mock fixture object" do
