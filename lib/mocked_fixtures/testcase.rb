@@ -23,7 +23,7 @@ module Test
         require "mocked_fixtures/mocks/#{mock_framework}"
         self.mocked_fixtures_mock_framework = mock_framework
         unless mock_framework == :rspec
-          self.class.send(:alias_method, :mock_model, "mock_model_with_#{mock_framework}".to_sym) 
+          self.send(:alias_method, :mock_model, "mock_model_with_#{mock_framework}".to_sym) 
         end
       end
       
