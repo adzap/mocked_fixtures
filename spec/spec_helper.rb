@@ -8,7 +8,7 @@ require 'active_record'
 require 'active_record/fixtures'
 require 'active_support'
 
-require 'rspec_on_rails/rspec_on_rails'
+require 'rspec-rails/rspec-rails'
 
 require 'mocked_fixtures/schema_parser'
 require 'mocked_fixtures/testcase'
