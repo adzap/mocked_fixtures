@@ -80,13 +80,16 @@ module Test
             @mock_fixture_cache[table_name] ||= {}
             if fixtures.first == :all
               fixtures = self.class.loaded_mock_fixtures[table_name].keys
-            end
+            end           
+            
+            mock_type = self.class.mocked_fixtures_mock_framework
             
             instances = fixtures.map do |fixture_name|
               if fixture = self.class.loaded_mock_fixtures[table_name][fixture_name.to_s]
-                model_class = self.class.loaded_mock_fixtures[table_name].send(:model_class)
-                mock_type   = self.class.mocked_fixtures_mock_framework
-
+                unless model_class = self.class.loaded_mock_fixtures[table_name].send(:model_class)
+                  raise StandardError, "No model class found for table name '#{table_name}'. Specify it explicitly 'set_fixture_class :table_name => 'ClassName'."
+                end
+                
                 @mock_fixture_cache[table_name][fixture_name] ||= MockedFixtures::MockFactory.create_mock(mock_type, model_class, fixture, self)
               else
                 raise StandardError, "No mock fixture with name '#{fixture}' found for table '#{table_name}'"
