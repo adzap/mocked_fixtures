@@ -3,7 +3,7 @@ License.txt
 Manifest.txt
 README.txt
 Rakefile
-TODO
+TODO.txt
 config/hoe.rb
 config/requirements.rb
 init.rb
