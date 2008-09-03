@@ -164,6 +164,8 @@ Now the schema.rb file should be complete.
 
 == REQUIREMENTS:
 
+Rails 2.x
+
 At least one of:
 
 * Spec::Mock (included with Rspec)
