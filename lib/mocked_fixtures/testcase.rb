@@ -92,7 +92,7 @@ module Test
                 
                 @mock_fixture_cache[table_name][fixture_name] ||= MockedFixtures::MockFactory.create_mock(mock_type, model_class, fixture, self)
               else
-                raise StandardError, "No mock fixture with name '#{fixture}' found for table '#{table_name}'"
+                raise StandardError, "No fixture named '#{fixture_name}' was found for table '#{table_name}'"
               end
             end
 

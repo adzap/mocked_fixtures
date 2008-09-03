@@ -59,6 +59,10 @@ describe Test::Unit::TestCase, "extended with mocked_fixtures" do
       mock_employees(:all).size.should == 2
     end
     
+    it "should raise error when fixture cannot be found" do
+      lambda { mock_companies(:non_fixture) }.should raise_error(StandardError, /No fixture named 'non_fixture'/)
+    end
+    
     #it "should execute block on mock object requested" do
     #  employee = mock_employees(:adam) do |employee|
     #    employee.stub!(:last_name).and_return(employee.last_name.upcase)
