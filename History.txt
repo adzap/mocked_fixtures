@@ -1,4 +1,4 @@
-== 0.1.0 *DATE OF RELEASE*
+== 0.1.0 2008-09-03
 
 * 1 major enhancement:
   * Initial release
