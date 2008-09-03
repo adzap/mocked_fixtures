@@ -1,1 +1,2 @@
-# not loaded by default needs to be loaded after rspec but before rspec-rails
+require 'mocked_fixtures' if ENV['RAILS_ENV'] == 'test'
+
