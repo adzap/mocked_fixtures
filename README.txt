@@ -1,10 +1,10 @@
 = mocked_fixtures
 
-* Project page: http://mockedfixtures.rubyforge.com/
-* Tickets:      http://adzap.lighthouseapp.com/
+* Project page: http://mockedfixtures.rubyforge.org/
+* Tickets:      http://adzap.lighthouseapp.com/projects/16416-mocked_fixtures
 * Contribute:   http://github.com/adzap/mocked_fixtures
-* Discuss:      http://groups.google.com/mocked_fixtures
-* Blog:         http://duckpunching.com/
+* Discuss:      http://groups.google.com/group/mocked_fixtures
+* Blog:         http://duckpunching.com/mocked_fixtures
 
 
 == DESCRIPTION:
@@ -17,10 +17,10 @@ Well actually fixtures still have their place. Especially with the foxy fixtures
 extensions added to Rails 2.0, they are now much easier to use. Problem is the 
 undesirable database overhead that comes with reloading your fixtures for every 
 test. Also, in controller and view tests, the database layer is unnecessary and 
-using mock objects is often preferred.
+using mock objects for test isolation is often preferred.
 
 This poses another challenge of the often tedious creation those mocks to return
-the values you need for testsm much like you did for your fixtures. But what if 
+the values you need for tests much like you did for your fixtures. But what if 
 you could reuse those fixtures as mocks where you don't need real ActiveRecord 
 objects. Well thats where mocked_fixtures comes in.
 
@@ -45,7 +45,7 @@ database access at all!
    model with all attributes methods stubbed out. Supported are Rspec, flexmock
    and mocha.
  * Same familiar style of using regular fixtures
- * Works with popular testing frameworks such as Rspec (with rspec_on_rails),
+ * Works with popular testing frameworks such as Rspec (with rspec-rails),
    shoulda and any testing library which uses good old test/unit as its base.
 
 What it doesn't do:
@@ -63,7 +63,7 @@ spec_helper file. For test/unit add it after the test/unit require like so
   require 'mocked_fixtures'
 
 If you are using Rspec then this line must go *above* the require for
-rspec_on_rails, like so
+rspec-rails, like so
 
   require 'spec'
   require 'mocked_fixtures'
@@ -75,13 +75,21 @@ are using. You need to add this to your test_helper
   class Test::Unit::TestCase
     
     # can be one of :flexmock or :mocha
-    self.mock_fixtures_with = :flexmock  
+    self.mock_fixtures_with :flexmock  
   end
   
-If you are using Rspec then the mocking library will be automatically set to
-default Rspec mocking library or which ever one you have set using the config
-mock_with option. If you are using something other than the supported libraries
-then you get an error alerting the plugin can't be used with that library.
+If you are using Rspec you need to set it in the configure block:
+
+  Spec::Runner.configure do |config|
+    
+    # can be one of :rspec, :flexmock or :mocha
+    config.mock_fixtures_with :rspec
+  end
+
+If you are using something other than the supported libraries then you get an 
+error alerting the plugin can't be used with that library. You can then write you own
+interface to the plugin for that library if you want. See the files in 
+lib/mocked_fixtures/mocks and the spec for mock fixture objects in spec/mock_factory_spec.rb.
   
 On to the good stuff. Now if you have a Company model and fixture for the model
 like this
@@ -118,8 +126,6 @@ fixture keys to get back an array of the objects.
 To quickly grab all of the fixtures you call use the :all option
 
   @companies = mock_companies(:all)
-
-
 
 Thats all for now, so mock on!
 
