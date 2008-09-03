@@ -54,23 +54,19 @@ What it doesn't do:
    tables, thats not what the plugin is for.
  * Create mock objects with the attribute setters. Only reader methods.
 
+
+Disclaimer:
+It is worth noting that the plugin is highly coupled to the Rails fixtures 
+implementation and so would likely break with future changes to the fixtures API.
+
 == SYNOPSIS:
 
-To get going you need to require the plugin at the top of your test_helper or 
-spec_helper file. For test/unit add it after the test/unit require like so
-  
-  require 'test/unit'
-  require 'mocked_fixtures'
-
-If you are using Rspec then this line must go *above* the require for
-rspec-rails, like so
-
-  require 'spec'
-  require 'mocked_fixtures'
-  require 'spec/rails'
+To get going you installed as a gem you need to require the plugin at the top
+of your test_helper or spec_helper file. If you installed as a Rails plugin then
+you can skip that step.
 
 If you are using test/unit then you need specify which mocking library you 
-are using. You need to add this to your test_helper
+are using in your test_helper like so:
 
   class Test::Unit::TestCase
     
@@ -127,7 +123,31 @@ To quickly grab all of the fixtures you call use the :all option
 
   @companies = mock_companies(:all)
 
+
+Like regular fixtures you can also declare global mock fixtures to pre-load for all
+your tests. Because the mock fixtures don't access the database it doesn't slow down
+the running of tests like global fixtures can.
+
+To setup global mock fixtures, in your test_helper put:
+
+  class Test::Unit::TestCase
+    
+    self.global_mock_fixtures = :companies
+  end
+  
+If you are using Rspec you need to set it in the configure block:
+
+  Spec::Runner.configure do |config|
+    
+    config.global_mock_fixtures = :companies
+  end
+
+You can also set the global to :all and all fixtures will be loaded as mocks. This
+can add some test startup time if you have a lot of fixtures but shouldn't slow 
+down your tests when running at all. Might use a bit of memory though.
+
 Thats all for now, so mock on!
+
 
 NOTE:
 If you use MS SQL Server then you need to apply a fix for this adapter to 
