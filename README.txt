@@ -154,6 +154,10 @@ At least one of:
 
 * sudo gem install mocked_fixtures
 
+Or as a plugin
+
+* ./script/plugin install git://github.com/adzap/mocked_fixtures.git
+
 == LICENSE:
 
 (The MIT License)
