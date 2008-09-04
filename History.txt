@@ -1,3 +1,10 @@
+== 0.2.0 2008-09-04
+
+* New features:
+  * Added blocks to mock fixture accessors to allow neater customisation of mock objects as they are loaded
+* Refactored hooks for loading mock fixtures on test setup. Much simpler and handles Rails 2.0 and 2.1
+  without load order issues with rspec-rails
+  
 == 0.1.0 2008-09-03
 
 * 1 major enhancement:
