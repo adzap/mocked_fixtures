@@ -7,6 +7,10 @@ describe MockedFixtures::MockFixtures do
     ActiveRecord::Base.connection.disconnect! rescue nil
   end
   
+  after(:all) do    
+    ActiveRecord::Base.connection.reconnect! rescue nil
+  end
+  
   before(:each) do
     @fixture_path = Test::Unit::TestCase.fixture_path
   end  
