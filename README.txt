@@ -124,6 +124,15 @@ To quickly grab all of the fixtures you call use the :all option
   @companies = mock_companies(:all)
 
 
+You can also pass a block to the fixture accessor method to neatly customize the mock
+object for local use
+
+  @company = mock_companies(:megacorp) do |c|
+    c.stub!(:some_method).and_return('special value')
+  end
+
+The block is called on all mock fixtures returned.
+
 Like regular fixtures you can also declare global mock fixtures to pre-load for all
 your tests. Because the mock fixtures don't access the database it doesn't slow down
 the running of tests like global fixtures can.
