@@ -43,71 +43,38 @@ module Test
         table_names.map { |f| File.basename(f).split('.')[0..-2].join('.') }
       end
       
-      # Adds test case setup method to run before each test to load fixture
-      # files and setup mock fixture accessors for test class. This runs before
-      # each test as the test class is recreated each time.
-      def self.method_added_with_mock_fixtures(method)
-        return if @__disable_method_added__
-        @__disable_method_added__ = true
-
-        if method.to_s == 'setup'
-          unless method_defined?(:setup_without_mock_fixtures)
-            alias_method :setup_without_mock_fixtures, :setup
-            define_method(:mock_fixture_setup) do
-              setup_with_mock_fixtures
-              setup_without_mock_fixtures
-            end
-          end
-          alias_method :setup, :mock_fixture_setup
-        end
-        
-        @__disable_method_added__ = false
-        method_added_without_mock_fixtures(method)
-      end
-     
-      class << self
-        alias_method_chain :method_added, :mock_fixtures        
-      end
-     
       # This creates the fixture accessors and retrieves the fixture and creates
       # mock object from it. Mock fixture is then cached.
       def self.setup_mock_fixture_accessors(table_names = nil)
         (table_names || mock_fixture_table_names).each do |table_name|
           table_name = table_name.to_s.tr('.', '_')
-    
-          define_method('mock_' + table_name) do |*fixtures|
-            @mock_fixture_cache ||= {}
-            @mock_fixture_cache[table_name] ||= {}
-            if fixtures.first == :all
-              fixtures = self.class.loaded_mock_fixtures[table_name].keys
-            end           
-            
-            mock_type = self.class.mocked_fixtures_mock_framework
-            
-            instances = fixtures.map do |fixture_name|
-              if fixture = self.class.loaded_mock_fixtures[table_name][fixture_name.to_s]
-                unless model_class = self.class.loaded_mock_fixtures[table_name].send(:model_class)
-                  raise StandardError, "No model class found for table name '#{table_name}'. Specify it explicitly 'set_fixture_class :table_name => 'ClassName'."
-                end
-                
-                @mock_fixture_cache[table_name][fixture_name] ||= MockedFixtures::MockFactory.create_mock(mock_type, model_class, fixture, self)
-              else
-                raise StandardError, "No fixture named '#{fixture_name}' was found for table '#{table_name}'"
-              end
-            end
 
-            instances.size == 1 ? instances.first : instances
-          end
-          
+          class_eval <<-END
+            def mock_#{table_name}(*fixtures, &block)
+              create_mock_fixtures('#{table_name}', *fixtures, &block)
+            end
+          END
         end
-      end
-      
+      end      
+
       def setup_with_mock_fixtures
         fixtures_to_load = self.class.mock_fixture_table_names - self.class.loaded_mock_fixtures.keys
-        return if fixtures_to_load.empty?
-        load_mock_fixtures(fixtures_to_load)
+        load_mock_fixtures(fixtures_to_load) unless fixtures_to_load.empty?
+        setup_without_mock_fixtures
       end
-      alias_method :setup, :setup_with_mock_fixtures
+      
+      # Aliasing test setup method to get mock fixtures loaded.
+      #
+      # If app is Rails 2.0.x and rspec-rails is loaded before plugin,
+      # when used as gem perhaps, it prevents aliasing setup method,
+      if method_defined?(:setup_with_fixtures)
+        alias_method :setup_without_mock_fixtures, :setup_with_fixtures
+        alias_method :setup_with_fixtures, :setup_with_mock_fixtures
+      else
+        alias_method_chain :setup, :mock_fixtures
+      end
+    
+     private
 
       # Loads fixtures to be mocked and cache them in class variable
       def load_mock_fixtures(fixtures_to_load)
@@ -115,6 +82,34 @@ module Test
         unless fixtures.nil?
           fixtures.each { |f| self.class.loaded_mock_fixtures[f.table_name] = f }
         end
+      end
+
+      # Create mock fixture objects for fixture names and cache. Pass each
+      # fixture to block, if given, to customize mock object for local use.
+      def create_mock_fixtures(table_name, *fixtures, &block)
+        @mock_fixture_cache ||= {}
+        @mock_fixture_cache[table_name] ||= {}
+        if fixtures.first == :all
+          fixtures = self.class.loaded_mock_fixtures[table_name].keys
+        end
+        
+        mock_type = self.class.mocked_fixtures_mock_framework
+        
+        instances = fixtures.map do |fixture_name|
+          if fixture = self.class.loaded_mock_fixtures[table_name][fixture_name.to_s]
+            unless model_class = self.class.loaded_mock_fixtures[table_name].send(:model_class)
+              raise StandardError, "No model class found for table name '#{table_name}'. Specify it explicitly 'set_fixture_class :table_name => 'ClassName'."
+            end
+            mock_fixture = MockedFixtures::MockFactory.create_mock(mock_type, model_class, fixture, self)
+            @mock_fixture_cache[table_name][fixture_name] ||= mock_fixture
+            yield(mock_fixture) if block_given?
+            mock_fixture
+          else
+            raise StandardError, "No fixture named '#{fixture_name}' was found for table '#{table_name}'"
+          end
+        end
+
+        instances.size == 1 ? instances.first : instances
       end
     
     end

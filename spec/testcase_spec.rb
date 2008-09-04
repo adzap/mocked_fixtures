@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-describe Test::Unit::TestCase, "extended with mocked_fixtures" do
+describe 'Test::Unit::TestCase', "when extended with mocked_fixtures" do
   
   def klass
     Test::Unit::TestCase
@@ -24,7 +24,7 @@ describe Test::Unit::TestCase, "extended with mocked_fixtures" do
   end
  
   it "should return all fixture table names" do
-    klass.all_fixture_table_names.should == ['employees', 'companies']
+    klass.all_fixture_table_names.should include('employees', 'companies')
   end
  
   describe "global mock fixtures" do
@@ -36,11 +36,11 @@ describe Test::Unit::TestCase, "extended with mocked_fixtures" do
     
     it "should include all fixtures if equals :all" do
       klass.global_mock_fixtures = :all
-      klass.mock_fixture_table_names.should == ['employees', 'companies']
+      klass.mock_fixture_table_names.should include('employees', 'companies')
     end
   end
   
-  describe "mocked fixture accessor" do     
+  describe "mocked fixture accessors" do
     mock_fixtures :companies, :employees    
     
     before(:all) do
@@ -63,11 +63,29 @@ describe Test::Unit::TestCase, "extended with mocked_fixtures" do
       lambda { mock_companies(:non_fixture) }.should raise_error(StandardError, /No fixture named 'non_fixture'/)
     end
     
-    #it "should execute block on mock object requested" do
-    #  employee = mock_employees(:adam) do |employee|
-    #    employee.stub!(:last_name).and_return(employee.last_name.upcase)
-    #  end      
-    #  employee.last_name.should == "MEEHAN"
-    #end
+    it "should call block on mock object requested" do
+      employee = mock_employees(:adam) do |e|
+        e.stub!(:last_name).and_return('MEEHAN')
+      end
+      employee.last_name.should == "MEEHAN"
+    end
+    
+    it "should call block on all mock objects requested" do
+      employees = mock_employees(:adam, :jane) do |e|
+        e.stub!(:last_name).and_return('same')
+      end
+      employees.all? {|e| e.last_name.should == "same" }
+    end
+  end
+  
+  describe "regular fixtures" do
+    fixtures :companies
+    
+    connect_db('sqlite')
+    disconnect_db
+    
+    it "should be loaded" do
+      companies(:mega_corp).should_not be_nil
+    end
   end
 end
