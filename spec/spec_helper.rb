@@ -38,41 +38,21 @@ Test::Unit::TestCase.fixture_path = File.expand_path(File.dirname(__FILE__) + '/
 ActiveRecord::Migration.verbose = false
 
 ActiveRecord::Base.configurations['sqlite'] = {
-  :adapter  => 'sqlite3', 
+  :adapter  => 'sqlite3',
   :database => ':memory:'
-}
-
-ActiveRecord::Base.configurations['mssql'] = {
-  :adapter  => 'sqlserver',
-  :host     => 'localhost',
-  :mode     => 'odbc', 
-  :dsn      => 'activerecord_unittest',
-  :database => 'activerecord_unittest',
-  :username => 'rails',
-  :password => nil
 }
 
 ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations['sqlite'])
 
 module SpecHelpers
-  def self.included(base)
-    base.extend ClassMethods
-  end 
-    
-  module ClassMethods
-    def connect_db(config)
-      before(:all) do
-        ActiveRecord::Base.connection.disconnect! rescue nil
-        ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[config])      
-        require 'resources/schema'
-      end
-    end
-    
-    def disconnect_db
-      after(:all) do
-        ActiveRecord::Base.connection.disconnect! rescue nil
-      end
-    end
+  def connect_db(config='sqlite')
+    ActiveRecord::Base.connection.disconnect! rescue nil
+    ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[config])
+    require 'resources/schema'
+  end
+
+  def disconnect_db
+    ActiveRecord::Base.connection.disconnect! rescue nil
   end
 end
 
