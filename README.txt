@@ -9,33 +9,33 @@
 
 == DESCRIPTION:
 
-Yes, lets laugh at those silly fixtures with their silly yaml or comma 
+Yes, lets laugh at those silly fixtures with their silly yaml or comma
 separated values! Ha ha ha! Don't they know how passe they are. All the cool kids
 are mocking and stubbing. Get with the times fixtures!
 
 Well actually fixtures still have their place. Especially with the foxy fixtures
-extensions added to Rails 2.0, they are now much easier to use. Problem is the 
-undesirable database overhead that comes with reloading your fixtures for every 
-test. Also, in controller and view tests, the database layer is unnecessary and 
+extensions added to Rails 2.0, they are now much easier to use. Problem is the
+undesirable database overhead that comes with reloading your fixtures for every
+test. Also, in controller and view tests, the database layer is unnecessary and
 using mock objects for test isolation is often preferred.
 
 This poses another challenge of the often tedious creation those mocks to return
-the values you need for tests much like you did for your fixtures. But what if 
-you could reuse those fixtures as mocks where you don't need real ActiveRecord 
+the values you need for tests much like you did for your fixtures. But what if
+you could reuse those fixtures as mocks where you don't need real ActiveRecord
 objects. Well thats where mocked_fixtures comes in.
 
 This plugin helps by allowing you use your fixtures as disconnected mock objects
-which never touch the database when loaded or used. So you can now keep using 
+which never touch the database when loaded or used. So you can now keep using
 those thoughtfully crafted fixtures in your controller and view tests but minus
 the database overhead.
 
 A mocked fixture is a mock model object with all the model attributes stubbed
-out to return the values from the fixture if defined. If no fixture value was 
+out to return the values from the fixture if defined. If no fixture value was
 defined then a nil is returned for the attribute method as you would expect.
-There are no attribute setters defined on the object as they are left for you 
+There are no attribute setters defined on the object as they are left for you
 to do as necessary.
 
-The attributes for each model are read from the schema.rb file to avoid any 
+The attributes for each model are read from the schema.rb file to avoid any
 database access at all!
 
 == FEATURES/PROBLEMS:
@@ -50,13 +50,13 @@ database access at all!
 
 What it doesn't do:
 
- * Touch the database. This means that the fixtures are not inserted in the 
+ * Touch the database. This means that the fixtures are not inserted in the
    tables, thats not what the plugin is for.
  * Create mock objects with the attribute setters. Only reader methods.
 
 
 Disclaimer:
-It is worth noting that the plugin is highly coupled to the Rails fixtures 
+It is worth noting that the plugin is highly coupled to the Rails fixtures
 implementation and so would likely break with future changes to the fixtures API.
 
 == SYNOPSIS:
@@ -65,28 +65,28 @@ To get going you installed as a gem you need to require the plugin at the top
 of your test_helper or spec_helper file. If you installed as a Rails plugin then
 you can skip that step.
 
-If you are using test/unit then you need specify which mocking library you 
+If you are using test/unit then you need specify which mocking library you
 are using in your test_helper like so:
 
   class Test::Unit::TestCase
-    
+
     # can be one of :flexmock or :mocha
-    self.mock_fixtures_with :flexmock  
+    self.mock_fixtures_with :flexmock
   end
-  
+
 If you are using Rspec you need to set it in the configure block:
 
   Spec::Runner.configure do |config|
-    
+
     # can be one of :rspec, :flexmock or :mocha
     config.mock_fixtures_with :rspec
   end
 
-If you are using something other than the supported libraries then you get an 
+If you are using something other than the supported libraries then you get an
 error alerting the plugin can't be used with that library. You can then write you own
-interface to the plugin for that library if you want. See the files in 
+interface to the plugin for that library if you want. See the files in
 lib/mocked_fixtures/mocks and the spec for mock fixture objects in spec/mock_factory_spec.rb.
-  
+
 On to the good stuff. Now if you have a Company model and fixture for the model
 like this
 
@@ -101,19 +101,19 @@ or spec at the top
 	  mock_fixtures :companies
 
 	  def setup
-		  @company = mock_companies(:megacorp)		  
+		  @company = mock_companies(:megacorp)
 	  end
-	  
+
 	  def test_does_something
 	    assert_equal @company.moto, 'Do Evil'
 	  end
   end
-  
-All the attributes will be stubbed to return the values from the fixture. The 
+
+All the attributes will be stubbed to return the values from the fixture. The
 fixture is generated using the internal Rails fixtures class, so any of fixture
 tricks, such as association labels and automatically generated ids, will work.
 
-If you want more than one fixture, then like normal fixtures you list the 
+If you want more than one fixture, then like normal fixtures you list the
 fixture keys to get back an array of the objects.
 
   @companies = mock_companies(:megacorp, :bigstuff)
@@ -140,33 +140,34 @@ the running of tests like global fixtures can.
 To setup global mock fixtures, in your test_helper put:
 
   class Test::Unit::TestCase
-    
+
     self.global_mock_fixtures = :companies
   end
-  
+
 If you are using Rspec you need to set it in the configure block:
 
   Spec::Runner.configure do |config|
-    
+
     config.global_mock_fixtures = :companies
   end
 
 You can also set the global to :all and all fixtures will be loaded as mocks. This
-can add some test startup time if you have a lot of fixtures but shouldn't slow 
+can add some test startup time if you have a lot of fixtures but shouldn't slow
 down your tests when running at all. Might use a bit of memory though.
 
 Thats all for now, so mock on!
 
 
 NOTE:
-If you use MS SQL Server then you need to apply a fix for this adapter to 
-correctly dump primary keys when not named 'id'. Just drop this line in an 
-initializer file
+If you use MS SQL Server then you may need to apply a fix for this adapter to
+correctly dump primary keys when not named 'id'. I have a plugin to help with that
+and other minor adapter issues. To install it
 
-  require 'mocked_fixtures/connection_adapters/sqlserver_adapter'
+  ./script/plugin install git://github.com/adzap/sqlserver_adapter_mods.git
 
-You then need to do a dump. Um, keep your pants on, I mean a database dump with
-  
+Once installed you then need to do a dump. Um, keep your pants on, I mean a database
+dump with
+
   rake db:schema:dump
 
 Now the schema.rb file should be complete.

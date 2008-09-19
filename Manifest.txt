@@ -8,7 +8,6 @@ config/hoe.rb
 config/requirements.rb
 init.rb
 lib/mocked_fixtures.rb
-lib/mocked_fixtures/connection_adapters/sqlserver_adapter.rb
 lib/mocked_fixtures/mock_connection.rb
 lib/mocked_fixtures/mock_factory.rb
 lib/mocked_fixtures/mock_fixtures.rb
@@ -21,7 +20,6 @@ lib/mocked_fixtures/testcase.rb
 lib/mocked_fixtures/version.rb
 script/console
 script/txt2html
-spec/connection_adapters/sqlserver_adapter_spec.rb
 spec/mock_connection_spec.rb
 spec/mock_factory_spec.rb
 spec/mock_fixtures_spec.rb
