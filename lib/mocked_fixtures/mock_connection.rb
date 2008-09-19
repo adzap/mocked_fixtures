@@ -1,7 +1,7 @@
 module MockedFixtures
   class MockConnection
     attr_accessor :schema, :loaded_fixtures, :current_fixture_label
-    
+
     # mock column class which is used in Fixtures class insert_fixtures method
     class Column
       attr_accessor :name, :type
@@ -9,31 +9,31 @@ module MockedFixtures
         @name, @type = name, type
       end
     end
-    
+
     def initialize
       @schema  = @@schema ||= MockedFixtures::SchemaParser.load_schema
       @columns = {}
       @loaded_fixtures = {}
     end
-     
+
     # stores full fixture after association values loaded and type casting
     def insert_fixture(fixture, table_name)
       loaded_fixtures[table_name] ||= {}
       loaded_fixtures[table_name][@current_fixture_label] = type_cast_fixture(fixture, table_name)
     end
-    
+
     def type_cast_fixture(fixture, table_name)
-      fixture.to_hash.inject({}) do |new_hash, row|
+      fixture.to_hash.inject({}) do |new_hash, (k, v)|
         begin
-          type = @schema[table_name.to_s][:columns].assoc(row[0])[1]
-          new_hash[row[0].to_sym] = type_cast_value(type, row[1])
+          type = @schema[table_name.to_s][:columns].assoc(k)[1]
+          new_hash[k.to_sym] = type_cast_value(type, v)
           new_hash
         rescue
-          raise "Mock fixture key '#{row[0]}' not found in schema '#{table_name}'"
+          raise "Mock fixture key '#{k}' not found in schema '#{table_name}'"
         end
       end
     end
-    
+
     # Modified from ActiveRecord::Column class.
     def type_cast_value(type, value)
       return nil if value.nil?
@@ -52,8 +52,8 @@ module MockedFixtures
         when :boolean   then column.value_to_boolean(value)
         else value
       end
-    end    
-    
+    end
+
     def columns(table_name)
       @columns[table_name] ||= @schema[table_name.to_s][:columns].collect {|c| Column.new(c[0], c[1]) }
     end
