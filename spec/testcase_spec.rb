@@ -74,7 +74,7 @@ describe 'Test::Unit::TestCase', "when extended with mocked_fixtures" do
       employees = mock_employees(:adam, :jane) do |e|
         e.stub!(:last_name).and_return('same')
       end
-      employees.all? {|e| e.last_name.should == "same" }
+      employees.all? {|e| e.last_name == "same" }.should be_true
     end
   end
 
