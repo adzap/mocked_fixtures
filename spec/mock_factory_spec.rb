@@ -16,6 +16,10 @@ describe MockedFixtures::MockFactory do
           @a_mock = MockedFixtures::MockFactory.create_mock(type, Company, @fixture, self)
         end
         
+        it "should be identified by model class name and id value" do
+          a_mock.inspect.should match(/Company_6/)
+        end
+        
         it "should have all attributes stubbed" do
           a_mock.should respond_to(:cid, :name, :address, :created_at, :updated_at)
         end
