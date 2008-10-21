@@ -2,4 +2,3 @@ Todo
 ====
 - Blocks for mock fixture accessor to set custom values
 - Stub out associations methods and return mocked association fixtures
-- Cache schema
