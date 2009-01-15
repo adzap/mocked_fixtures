@@ -16,4 +16,8 @@ module MockedFixtures
   end
 end
 
-Spec::Example::Configuration.send(:include, MockedFixtures::Spec::Configuration)
+if defined?(Spec::Example::Configuration)
+  Spec::Example::Configuration
+else
+  Spec::Runner::Configuration
+end.send(:include, MockedFixtures::Spec::Configuration)
